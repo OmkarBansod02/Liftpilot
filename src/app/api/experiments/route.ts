@@ -1,15 +1,15 @@
 import { createExperimentInputSchema } from "@/features/experiments/schemas/experiment-input";
-import { createExperimentRequest } from "@/features/experiments/server/create-experiment-request";
-import { parseJsonRequest } from "@/lib/validations/parse-request";
+import { createExperiment } from "@/features/experiments/server/create-experiment";
+import { parseJsonBody } from "@/lib/validations/parse-json-body";
 
 export async function POST(request: Request): Promise<Response> {
-  const parsed = await parseJsonRequest(request, createExperimentInputSchema);
+  const parsed = await parseJsonBody(request, createExperimentInputSchema);
 
   if (!parsed.ok) {
     return parsed.response;
   }
 
-  const result = await createExperimentRequest(parsed.data);
+  const result = await createExperiment(parsed.data);
 
   return Response.json(result, { status: 202 });
 }

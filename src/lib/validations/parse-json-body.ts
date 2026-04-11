@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export type ParsedJsonRequest<T> =
+export type ParsedJsonBody<T> =
   | {
       ok: true;
       data: T;
@@ -10,10 +10,10 @@ export type ParsedJsonRequest<T> =
       response: Response;
     };
 
-export async function parseJsonRequest<T>(
+export async function parseJsonBody<T>(
   request: Request,
   schema: z.ZodType<T>,
-): Promise<ParsedJsonRequest<T>> {
+): Promise<ParsedJsonBody<T>> {
   let body: unknown;
 
   try {

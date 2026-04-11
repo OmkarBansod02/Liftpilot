@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Search, BarChart3, FlaskConical } from "lucide-react";
+import { ArrowRight, Search, FlaskConical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const loopSteps = [

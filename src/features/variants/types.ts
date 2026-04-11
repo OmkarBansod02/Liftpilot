@@ -5,6 +5,6 @@ export interface VariantProposal {
   subheadline: string;
   ctaLabel: string;
   rationale: string;
-  status: "pending" | "approved" | "rejected";
+  status: "draft" | "pending_approval" | "approved" | "rejected";
   createdAt: Date;
 }

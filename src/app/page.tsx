@@ -139,7 +139,7 @@ export default function HomePage() {
       <footer className="border-t">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6 text-sm text-muted-foreground">
           <span>Liftpilot</span>
-          <span>Phase 0 — Foundation</span>
+          <span>Phase 1 — URL Audit</span>
         </div>
       </footer>
     </div>

@@ -1,33 +1,73 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useState } from "react";
+import { z } from "zod";
+
+import { auditResultSchema } from "../schemas/audit-result";
 import type { AuditResult, AuditStatus } from "../types";
-import { MOCK_AUDIT_RESULT } from "../lib/mock-audit-data";
 import { AuditForm } from "./audit-form";
 import { AuditLoading } from "./audit-loading";
 import { AuditResults } from "./audit-results";
 import { AuditEmpty } from "./audit-empty";
 import { AuditError } from "./audit-error";
 
+const auditErrorResponseSchema = z.object({
+  error: z.string().optional(),
+});
+
 export function AuditPageClient() {
   const [status, setStatus] = useState<AuditStatus>("idle");
   const [result, setResult] = useState<AuditResult | null>(null);
   const [submittedUrl, setSubmittedUrl] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  function handleSubmit(url: string) {
+  async function handleSubmit(url: string) {
     setSubmittedUrl(url);
     setResult(null);
+    setErrorMessage(null);
     setStatus("loading");
-  }
 
-  const handleLoadingComplete = useCallback(() => {
-    setResult({ ...MOCK_AUDIT_RESULT, url: submittedUrl });
-    setStatus("success");
-  }, [submittedUrl]);
+    try {
+      const response = await fetch("/api/audit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url }),
+      });
+
+      const body: unknown = await response.json();
+
+      if (!response.ok) {
+        const parsedError = auditErrorResponseSchema.safeParse(body);
+        setErrorMessage(
+          parsedError.data?.error ??
+            "We couldn't complete the audit for this URL.",
+        );
+        setStatus("error");
+        return;
+      }
+
+      const parsedResult = auditResultSchema.safeParse(body);
+
+      if (!parsedResult.success) {
+        setErrorMessage("The audit completed, but the response was not valid.");
+        setStatus("error");
+        return;
+      }
+
+      setResult(parsedResult.data);
+      setStatus("success");
+    } catch {
+      setErrorMessage("The audit request failed. Check the URL and try again.");
+      setStatus("error");
+    }
+  }
 
   function handleRetry() {
     setStatus("idle");
     setResult(null);
+    setErrorMessage(null);
   }
 
   return (
@@ -39,8 +79,10 @@ export function AuditPageClient() {
       />
 
       {status === "idle" && <AuditEmpty />}
-      {status === "loading" && <AuditLoading onComplete={handleLoadingComplete} />}
-      {status === "error" && <AuditError onRetry={handleRetry} />}
+      {status === "loading" && <AuditLoading />}
+      {status === "error" && (
+        <AuditError message={errorMessage ?? undefined} onRetry={handleRetry} />
+      )}
       {status === "success" && result && <AuditResults result={result} />}
     </div>
   );

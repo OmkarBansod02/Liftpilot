@@ -6,18 +6,13 @@ import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
 import { AUDIT_LOADING_STEPS } from "../lib/mock-audit-data";
 
-interface AuditLoadingProps {
-  onComplete: () => void;
-}
-
-export function AuditLoading({ onComplete }: AuditLoadingProps) {
+export function AuditLoading() {
   const [currentStep, setCurrentStep] = useState(0);
   const totalSteps = AUDIT_LOADING_STEPS.length;
 
   useEffect(() => {
-    if (currentStep >= totalSteps) {
-      const timeout = setTimeout(onComplete, 400);
-      return () => clearTimeout(timeout);
+    if (currentStep >= totalSteps - 1) {
+      return;
     }
 
     const step = AUDIT_LOADING_STEPS[currentStep];
@@ -26,10 +21,9 @@ export function AuditLoading({ onComplete }: AuditLoadingProps) {
     }, step.duration);
 
     return () => clearTimeout(timeout);
-  }, [currentStep, totalSteps, onComplete]);
+  }, [currentStep, totalSteps]);
 
-  const progressPercent =
-    currentStep >= totalSteps ? 100 : (currentStep / totalSteps) * 100;
+  const progressPercent = ((currentStep + 1) / totalSteps) * 100;
 
   return (
     <Card>

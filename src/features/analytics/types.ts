@@ -1,9 +1,13 @@
-export interface PageMetrics {
+export interface DashboardMetrics {
   totalSessions: number;
+  totalPageViews: number;
+  ctaClicks: number;
+  formStarts: number;
+  formSubmits: number;
   ctaClickRate: number;
   formStartRate: number;
   formCompletionRate: number;
-  avgScrollDepth: number;
+  conversionRate: number;
 }
 
 export interface DiagnosisSummary {

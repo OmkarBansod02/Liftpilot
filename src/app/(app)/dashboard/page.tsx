@@ -1,104 +1,106 @@
-import { Activity, MousePointerClick, ScrollText, FormInput } from "lucide-react";
+export const dynamic = "force-dynamic";
+
+import {
+  Activity,
+  Eye,
+  MousePointerClick,
+  FormInput,
+  Send,
+} from "lucide-react";
 import { PageContainer } from "@/components/layout/page-container";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { MetricCard } from "@/features/analytics/components/metric-card";
+import { ConversionFunnel } from "@/features/analytics/components/conversion-funnel";
+import { DashboardEmpty } from "@/features/analytics/components/dashboard-empty";
+import { getDashboardMetrics } from "@/features/analytics/server/get-dashboard-metrics";
+import { ensureDemoPage } from "@/features/demo/server/ensure-demo-page";
 
-const metricCards = [
-  {
-    title: "Sessions",
-    value: "—",
-    description: "Total tracked sessions",
-    icon: Activity,
-  },
-  {
-    title: "CTA Clicks",
-    value: "—",
-    description: "Click-through rate",
-    icon: MousePointerClick,
-  },
-  {
-    title: "Scroll Depth",
-    value: "—",
-    description: "Avg. scroll milestone",
-    icon: ScrollText,
-  },
-  {
-    title: "Form Starts",
-    value: "—",
-    description: "Form engagement rate",
-    icon: FormInput,
-  },
-] as const;
+function formatPercent(value: number): string {
+  if (value === 0) return "0%";
+  return `${(value * 100).toFixed(1)}%`;
+}
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const { pageId } = await ensureDemoPage();
+  const metrics = await getDashboardMetrics(pageId);
+
+  const hasData = metrics.totalSessions > 0;
+
   return (
     <PageContainer>
       <PageHeader
         title="Dashboard"
-        description="Monitor visitor behavior, diagnose friction, and track experiment performance."
+        description="Monitor visitor behavior and track conversion performance."
       >
-        <Badge variant="secondary">Phase 1</Badge>
+        <Badge variant="secondary">Phase 2</Badge>
       </PageHeader>
 
-      {/* Metric cards */}
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {metricCards.map((metric) => (
-          <Card key={metric.title}>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardDescription>{metric.title}</CardDescription>
-                <metric.icon className="size-4 text-muted-foreground" />
+      {!hasData ? (
+        <div className="mt-8">
+          <DashboardEmpty />
+        </div>
+      ) : (
+        <>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            <MetricCard
+              title="Sessions"
+              value={metrics.totalSessions.toLocaleString()}
+              description="Total tracked sessions"
+              icon={Activity}
+            />
+            <MetricCard
+              title="Page Views"
+              value={metrics.totalPageViews.toLocaleString()}
+              description="Total page view events"
+              icon={Eye}
+            />
+            <MetricCard
+              title="CTA Clicks"
+              value={metrics.ctaClicks.toLocaleString()}
+              description={`${formatPercent(metrics.ctaClickRate)} click-through`}
+              icon={MousePointerClick}
+            />
+            <MetricCard
+              title="Form Starts"
+              value={metrics.formStarts.toLocaleString()}
+              description={`${formatPercent(metrics.formStartRate)} engagement`}
+              icon={FormInput}
+            />
+            <MetricCard
+              title="Form Submits"
+              value={metrics.formSubmits.toLocaleString()}
+              description={`${formatPercent(metrics.conversionRate)} conversion`}
+              icon={Send}
+            />
+          </div>
+
+          <div className="mt-6 grid gap-6 lg:grid-cols-2">
+            <ConversionFunnel metrics={metrics} />
+
+            <div className="flex flex-col gap-4">
+              <div className="rounded-xl border bg-card p-6">
+                <h3 className="text-sm font-semibold">Conversion Rate</h3>
+                <p className="mt-2 text-3xl font-bold tabular-nums">
+                  {formatPercent(metrics.conversionRate)}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Form submits / total sessions
+                </p>
               </div>
-              <CardTitle className="text-2xl tabular-nums">
-                {metric.value}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xs text-muted-foreground">
-                {metric.description}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Diagnosis and recommendation */}
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Diagnosis</CardTitle>
-            <CardDescription>
-              Likely friction point based on visitor behavior
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex h-24 items-center justify-center rounded-lg border border-dashed text-sm text-muted-foreground">
-              Install the snippet to start collecting data
+              <div className="rounded-xl border bg-card p-6">
+                <h3 className="text-sm font-semibold">Form Completion</h3>
+                <p className="mt-2 text-3xl font-bold tabular-nums">
+                  {formatPercent(metrics.formCompletionRate)}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Form submits / form starts
+                </p>
+              </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Recommended Experiment</CardTitle>
-            <CardDescription>
-              Suggested improvement based on diagnosis
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex h-24 items-center justify-center rounded-lg border border-dashed text-sm text-muted-foreground">
-              A recommendation will appear after diagnosis
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </>
+      )}
     </PageContainer>
   );
 }

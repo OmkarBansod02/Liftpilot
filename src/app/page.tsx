@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Search, FlaskConical } from "lucide-react";
+import { ArrowRight, Search, FlaskConical, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const loopSteps = [
@@ -99,7 +99,7 @@ export default function HomePage() {
               snippet-powered optimization.
             </p>
           </div>
-          <div className="mx-auto mt-10 grid max-w-3xl gap-6 sm:grid-cols-2">
+          <div className="mx-auto mt-10 grid max-w-4xl gap-6 sm:grid-cols-3">
             <div className="rounded-xl border bg-card p-6">
               <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
                 <Search className="size-5 text-muted-foreground" />
@@ -112,6 +112,22 @@ export default function HomePage() {
               <Button variant="outline" size="sm" className="mt-4" asChild>
                 <Link href="/audit">
                   Try it
+                  <ArrowRight className="size-3.5" />
+                </Link>
+              </Button>
+            </div>
+            <div className="rounded-xl border bg-card p-6">
+              <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
+                <Eye className="size-5 text-muted-foreground" />
+              </div>
+              <h3 className="mt-4 font-semibold">Demo Page</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Visit a realistic tracked landing page. Your interactions
+                are recorded and visible in the dashboard.
+              </p>
+              <Button variant="outline" size="sm" className="mt-4" asChild>
+                <Link href="/demo">
+                  Visit demo
                   <ArrowRight className="size-3.5" />
                 </Link>
               </Button>
@@ -139,7 +155,7 @@ export default function HomePage() {
       <footer className="border-t">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6 text-sm text-muted-foreground">
           <span>Liftpilot</span>
-          <span>Phase 1 — URL Audit</span>
+          <span>Phase 2 — Observe</span>
         </div>
       </footer>
     </div>

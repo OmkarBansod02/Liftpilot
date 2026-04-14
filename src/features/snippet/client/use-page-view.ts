@@ -10,6 +10,9 @@ export function usePageView() {
   useEffect(() => {
     if (!ready || fired.current) return;
     fired.current = true;
-    track("page_view");
+    track("page_view", {
+      path: window.location.pathname,
+      title: document.title,
+    });
   }, [ready, track]);
 }

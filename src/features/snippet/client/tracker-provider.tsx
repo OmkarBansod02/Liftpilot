@@ -9,16 +9,26 @@ import {
   type ReactNode,
 } from "react";
 import { trackEvent, initSession } from "./tracker";
-import type { SnippetEventType } from "@/features/analytics/schemas/event-input";
+import type {
+  SnippetEventPayloadByType,
+  SnippetEventType,
+} from "@/features/analytics/schemas/event-input";
+
+type TrackArgs<EventType extends SnippetEventType> =
+  Record<string, never> extends SnippetEventPayloadByType[EventType]
+    ? [payload?: SnippetEventPayloadByType[EventType]]
+    : [payload: SnippetEventPayloadByType[EventType]];
+
+type TrackSnippetEvent = <EventType extends SnippetEventType>(
+  eventType: EventType,
+  ...args: TrackArgs<EventType>
+) => void;
 
 interface TrackerContextValue {
   pageId: string;
   sessionId: string | null;
   ready: boolean;
-  track: (
-    eventType: SnippetEventType,
-    payload?: Record<string, unknown>,
-  ) => void;
+  track: TrackSnippetEvent;
 }
 
 const TrackerContext = createContext<TrackerContextValue | null>(null);
@@ -52,9 +62,10 @@ export function TrackerProvider({ pageId, children }: TrackerProviderProps) {
     });
   }, [pageId]);
 
-  const track = useCallback(
-    (eventType: SnippetEventType, payload?: Record<string, unknown>) => {
+  const track = useCallback<TrackSnippetEvent>(
+    (eventType, ...args) => {
       if (!sessionId) return;
+      const payload = args[0];
       trackEvent({ pageId, sessionId, eventType, payload });
     },
     [pageId, sessionId],

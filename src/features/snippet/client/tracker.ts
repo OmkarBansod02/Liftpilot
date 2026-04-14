@@ -1,18 +1,21 @@
-import type { SnippetEventType } from "@/features/analytics/schemas/event-input";
+import type {
+  SnippetEventPayloadByType,
+  SnippetEventType,
+} from "@/features/analytics/schemas/event-input";
 
-interface TrackEventParams {
+export interface TrackEventParams<EventType extends SnippetEventType> {
   pageId: string;
   sessionId: string;
-  eventType: SnippetEventType;
-  payload?: Record<string, unknown>;
+  eventType: EventType;
+  payload?: SnippetEventPayloadByType[EventType];
 }
 
-export async function trackEvent({
+export async function trackEvent<EventType extends SnippetEventType>({
   pageId,
   sessionId,
   eventType,
   payload,
-}: TrackEventParams): Promise<boolean> {
+}: TrackEventParams<EventType>): Promise<boolean> {
   try {
     const response = await fetch("/api/events", {
       method: "POST",
@@ -36,7 +39,29 @@ interface InitSessionParams {
   anonymousId: string;
 }
 
+const pendingSessions = new Map<string, Promise<string | null>>();
+
 export async function initSession({
+  pageId,
+  anonymousId,
+}: InitSessionParams): Promise<string | null> {
+  const requestKey = `${pageId}:${anonymousId}`;
+  const pendingSession = pendingSessions.get(requestKey);
+
+  if (pendingSession) {
+    return pendingSession;
+  }
+
+  const request = createSession({ pageId, anonymousId }).finally(() => {
+    pendingSessions.delete(requestKey);
+  });
+
+  pendingSessions.set(requestKey, request);
+
+  return request;
+}
+
+async function createSession({
   pageId,
   anonymousId,
 }: InitSessionParams): Promise<string | null> {

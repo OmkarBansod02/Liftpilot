@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useTracker } from "./tracker-provider";
 
-const MILESTONES = [25, 50, 75, 100];
+const MILESTONES = [25, 50, 75, 100] as const;
 
 export function useScrollDepth() {
   const { track, ready } = useTracker();
@@ -22,7 +22,7 @@ export function useScrollDepth() {
       for (const milestone of MILESTONES) {
         if (percent >= milestone && !reached.current.has(milestone)) {
           reached.current.add(milestone);
-          track("scroll_milestone", { depth: milestone });
+          track("scroll_depth", { depth: milestone });
         }
       }
     }

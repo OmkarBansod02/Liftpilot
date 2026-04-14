@@ -16,14 +16,14 @@ export function DemoSignupForm() {
   const handleFocus = useCallback(() => {
     if (formStarted) return;
     setFormStarted(true);
-    track("form_start", { field: "email" });
+    track("form_start", { formId: "demo-signup", field: "email" });
   }, [formStarted, track]);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
       if (!email.trim()) return;
-      track("form_submit", { field: "email" });
+      track("form_submit", { formId: "demo-signup" });
       setSubmitted(true);
     },
     [email, track],

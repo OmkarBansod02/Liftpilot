@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { MetricCard } from "@/features/analytics/components/metric-card";
 import { ConversionFunnel } from "@/features/analytics/components/conversion-funnel";
 import { DashboardEmpty } from "@/features/analytics/components/dashboard-empty";
-import { DiagnosisCard } from "@/features/analytics/components/diagnosis-card";
+import { DiagnosisSection } from "@/features/analytics/components/diagnosis-section";
 import { getDashboardMetrics } from "@/features/analytics/server/get-dashboard-metrics";
 import { ensureDemoPage } from "@/features/demo/server/ensure-demo-page";
 
@@ -81,15 +81,15 @@ export default async function DashboardPage() {
             />
           </div>
 
-          <div className="mt-6">
-            <DiagnosisCard diagnosis={metrics.diagnosis} />
+          <div className="mt-8">
+            <DiagnosisSection diagnosis={metrics.diagnosis} />
           </div>
 
-          <div className="mt-6 grid gap-6 lg:grid-cols-2">
+          <div className="mt-8 grid gap-6 lg:grid-cols-2">
             <ConversionFunnel metrics={metrics} />
 
             <div className="flex flex-col gap-4">
-              <div className="rounded-xl border bg-card p-6">
+              <div className="rounded-xl border bg-card p-6 ring-1 ring-foreground/10">
                 <h3 className="text-sm font-semibold">CTA Click-Through</h3>
                 <p className="mt-2 text-3xl font-bold tabular-nums">
                   {formatPercent(metrics.ctaClickThroughRate)}
@@ -98,7 +98,7 @@ export default async function DashboardPage() {
                   CTA clicks / total sessions
                 </p>
               </div>
-              <div className="rounded-xl border bg-card p-6">
+              <div className="rounded-xl border bg-card p-6 ring-1 ring-foreground/10">
                 <h3 className="text-sm font-semibold">Average Max Scroll</h3>
                 <p className="mt-2 text-3xl font-bold tabular-nums">
                   {formatDepth(metrics.scrollDepth.averageMaxScrollDepth)}
@@ -107,7 +107,7 @@ export default async function DashboardPage() {
                   Deepest scroll milestone averaged across sessions
                 </p>
               </div>
-              <div className="rounded-xl border bg-card p-6">
+              <div className="rounded-xl border bg-card p-6 ring-1 ring-foreground/10">
                 <h3 className="text-sm font-semibold">Form Submit Rate</h3>
                 <p className="mt-2 text-3xl font-bold tabular-nums">
                   {formatPercent(metrics.formSubmitRate)}

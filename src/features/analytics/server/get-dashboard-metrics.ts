@@ -1,7 +1,12 @@
 import { db } from "@/lib/db";
 import { sessions, events } from "@/lib/db/schema";
-import { eq, count, and } from "drizzle-orm";
+import { eq, count } from "drizzle-orm";
 import type { DashboardMetrics } from "@/features/analytics/types";
+
+function calculateRate(numerator: number, denominator: number): number {
+  if (denominator === 0) return 0;
+  return numerator / denominator;
+}
 
 export async function getDashboardMetrics(
   pageId: string,
@@ -31,18 +36,14 @@ export async function getDashboardMetrics(
   const formStarts = countByType.get("form_start") ?? 0;
   const formSubmits = countByType.get("form_submit") ?? 0;
 
-  const safeSessions = Math.max(totalSessions, 1);
-  const safeFormStarts = Math.max(formStarts, 1);
-
   return {
     totalSessions,
     totalPageViews,
     ctaClicks,
     formStarts,
     formSubmits,
-    ctaClickRate: ctaClicks / safeSessions,
-    formStartRate: formStarts / safeSessions,
-    formCompletionRate: formSubmits / safeFormStarts,
-    conversionRate: formSubmits / safeSessions,
+    ctaClickThroughRate: calculateRate(ctaClicks, totalSessions),
+    formStartRate: calculateRate(formStarts, totalSessions),
+    formSubmitRate: calculateRate(formSubmits, totalSessions),
   };
 }

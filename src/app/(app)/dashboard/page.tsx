@@ -58,7 +58,7 @@ export default async function DashboardPage() {
             <MetricCard
               title="CTA Clicks"
               value={metrics.ctaClicks.toLocaleString()}
-              description={`${formatPercent(metrics.ctaClickRate)} click-through`}
+              description={`${formatPercent(metrics.ctaClickThroughRate)} click-through`}
               icon={MousePointerClick}
             />
             <MetricCard
@@ -70,7 +70,7 @@ export default async function DashboardPage() {
             <MetricCard
               title="Form Submits"
               value={metrics.formSubmits.toLocaleString()}
-              description={`${formatPercent(metrics.conversionRate)} conversion`}
+              description={`${formatPercent(metrics.formSubmitRate)} submit rate`}
               icon={Send}
             />
           </div>
@@ -80,21 +80,21 @@ export default async function DashboardPage() {
 
             <div className="flex flex-col gap-4">
               <div className="rounded-xl border bg-card p-6">
-                <h3 className="text-sm font-semibold">Conversion Rate</h3>
+                <h3 className="text-sm font-semibold">CTA Click-Through</h3>
                 <p className="mt-2 text-3xl font-bold tabular-nums">
-                  {formatPercent(metrics.conversionRate)}
+                  {formatPercent(metrics.ctaClickThroughRate)}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Form submits / total sessions
+                  CTA clicks / total sessions
                 </p>
               </div>
               <div className="rounded-xl border bg-card p-6">
-                <h3 className="text-sm font-semibold">Form Completion</h3>
+                <h3 className="text-sm font-semibold">Form Submit Rate</h3>
                 <p className="mt-2 text-3xl font-bold tabular-nums">
-                  {formatPercent(metrics.formCompletionRate)}
+                  {formatPercent(metrics.formSubmitRate)}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Form submits / form starts
+                  Form submits / total sessions
                 </p>
               </div>
             </div>

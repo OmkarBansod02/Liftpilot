@@ -23,7 +23,7 @@ function buildFunnelSteps(metrics: DashboardMetrics): FunnelStep[] {
     {
       label: "CTA Clicks",
       count: metrics.ctaClicks,
-      rate: formatPercent(metrics.ctaClickRate),
+      rate: formatPercent(metrics.ctaClickThroughRate),
     },
     {
       label: "Form Starts",
@@ -33,7 +33,7 @@ function buildFunnelSteps(metrics: DashboardMetrics): FunnelStep[] {
     {
       label: "Form Submits",
       count: metrics.formSubmits,
-      rate: formatPercent(metrics.conversionRate),
+      rate: formatPercent(metrics.formSubmitRate),
     },
   ];
 }

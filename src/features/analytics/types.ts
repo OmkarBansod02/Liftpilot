@@ -4,10 +4,9 @@ export interface DashboardMetrics {
   ctaClicks: number;
   formStarts: number;
   formSubmits: number;
-  ctaClickRate: number;
+  ctaClickThroughRate: number;
   formStartRate: number;
-  formCompletionRate: number;
-  conversionRate: number;
+  formSubmitRate: number;
 }
 
 export interface DiagnosisSummary {

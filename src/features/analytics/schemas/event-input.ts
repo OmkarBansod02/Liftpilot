@@ -2,19 +2,97 @@ import { z } from "zod";
 
 export const snippetEventTypeSchema = z.enum([
   "page_view",
-  "scroll_milestone",
+  "scroll_depth",
   "cta_click",
   "form_start",
   "form_submit",
 ]);
 
-export const recordEventInputSchema = z.object({
+const trackingTextSchema = z.string().trim().min(1).max(128);
+const pageTextSchema = z.string().trim().min(1).max(512);
+
+const baseEventInputSchema = z.object({
   pageId: z.string().uuid(),
   sessionId: z.string().uuid(),
-  eventType: snippetEventTypeSchema,
-  payload: z.record(z.string(), z.unknown()).default({}),
   occurredAt: z.string().datetime().optional(),
 });
 
+export const pageViewPayloadSchema = z
+  .object({
+    path: pageTextSchema.optional(),
+    title: pageTextSchema.optional(),
+  })
+  .strict();
+
+export const scrollDepthPayloadSchema = z
+  .object({
+    depth: z.union([
+      z.literal(25),
+      z.literal(50),
+      z.literal(75),
+      z.literal(100),
+    ]),
+  })
+  .strict();
+
+export const ctaClickPayloadSchema = z
+  .object({
+    label: trackingTextSchema.optional(),
+    location: trackingTextSchema.optional(),
+  })
+  .strict();
+
+export const formStartPayloadSchema = z
+  .object({
+    formId: trackingTextSchema.optional(),
+    field: trackingTextSchema.optional(),
+  })
+  .strict();
+
+export const formSubmitPayloadSchema = z
+  .object({
+    formId: trackingTextSchema.optional(),
+  })
+  .strict();
+
+export const recordEventInputSchema = z.discriminatedUnion("eventType", [
+  baseEventInputSchema
+    .extend({
+      eventType: z.literal("page_view"),
+      payload: pageViewPayloadSchema.default({}),
+    })
+    .strict(),
+  baseEventInputSchema
+    .extend({
+      eventType: z.literal("scroll_depth"),
+      payload: scrollDepthPayloadSchema,
+    })
+    .strict(),
+  baseEventInputSchema
+    .extend({
+      eventType: z.literal("cta_click"),
+      payload: ctaClickPayloadSchema.default({}),
+    })
+    .strict(),
+  baseEventInputSchema
+    .extend({
+      eventType: z.literal("form_start"),
+      payload: formStartPayloadSchema.default({}),
+    })
+    .strict(),
+  baseEventInputSchema
+    .extend({
+      eventType: z.literal("form_submit"),
+      payload: formSubmitPayloadSchema.default({}),
+    })
+    .strict(),
+]);
+
 export type SnippetEventType = z.infer<typeof snippetEventTypeSchema>;
 export type RecordEventInput = z.infer<typeof recordEventInputSchema>;
+export type SnippetEventPayloadByType = {
+  [EventType in SnippetEventType]: Extract<
+    RecordEventInput,
+    { eventType: EventType }
+  >["payload"];
+};

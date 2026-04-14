@@ -1,4 +1,4 @@
-# Liftpilot Phase 0 Schema
+# Liftpilot Schema
 
 This schema is intentionally small. It models the MVP loop without turning
 Liftpilot into a generic analytics or experimentation platform.
@@ -14,8 +14,8 @@ Liftpilot into a generic analytics or experimentation platform.
   recommended experiment.
 - `sessions`: an anonymous visitor session for a page. Stores anonymous ID,
   optional experiment context, user agent, referrer, and first/last seen times.
-- `events`: validated snippet events. Stores session, page, event type,
-  flexible payload JSON, and occurrence time.
+- `events`: validated snippet events. Stores session, page, event type, a small
+  typed payload JSON object, and occurrence time.
 - `variants`: one generated variant proposal. Stores page, optional source
   audit, approval status, structured variant content, and rationale.
 - `experiments`: one A/B test for a page and variant. Stores status, primary
@@ -26,7 +26,7 @@ Liftpilot into a generic analytics or experimentation platform.
 ## Enums
 
 - `audit_status`: `queued`, `processing`, `completed`, `failed`
-- `event_type`: `page_view`, `scroll_milestone`, `cta_click`, `form_start`,
+- `event_type`: `page_view`, `scroll_depth`, `cta_click`, `form_start`,
   `form_submit`
 - `variant_status`: `draft`, `pending_approval`, `approved`, `rejected`
 - `experiment_status`: `draft`, `running`, `paused`, `completed`
@@ -42,3 +42,24 @@ Liftpilot into a generic analytics or experimentation platform.
   content until Phase 1 proves which fields need normalization.
 - No repository layer, service container, workflow engine, or analytics
   framework exists in Phase 0.
+
+## Phase 2 Tracking Contract
+
+Anonymous sessions are reused by `page_id` and `anonymous_id`. The browser owns
+the anonymous ID; the server owns the persisted session row.
+
+Supported event payloads:
+
+- `page_view`: `{ "path"?: string, "title"?: string }`
+- `scroll_depth`: `{ "depth": 25 | 50 | 75 | 100 }`
+- `cta_click`: `{ "label"?: string, "location"?: string }`
+- `form_start`: `{ "formId"?: string, "field"?: string }`
+- `form_submit`: `{ "formId"?: string }`
+
+Dashboard metrics are computed directly from `sessions` and `events`:
+
+- total sessions
+- total page views
+- CTA clicks and click-through rate
+- form starts and form start rate
+- form submits and form submit rate

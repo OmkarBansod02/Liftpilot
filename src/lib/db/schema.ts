@@ -18,7 +18,7 @@ export const auditStatusEnum = pgEnum("audit_status", [
 
 export const eventTypeEnum = pgEnum("event_type", [
   "page_view",
-  "scroll_milestone",
+  "scroll_depth",
   "cta_click",
   "form_start",
   "form_submit",

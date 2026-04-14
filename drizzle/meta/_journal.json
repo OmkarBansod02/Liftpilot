@@ -8,6 +8,13 @@
       "when": 1775934739279,
       "tag": "0000_phase0_foundation",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1776092327184,
+      "tag": "0001_phase2_tracking_event_type",
+      "breakpoints": true
     }
   ]
 }

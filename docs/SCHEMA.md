@@ -63,3 +63,37 @@ Dashboard metrics are computed directly from `sessions` and `events`:
 - CTA clicks and click-through rate
 - form starts and form start rate
 - form submits and form submit rate
+
+## Phase 3 Diagnosis Contract
+
+Diagnosis is computed from dashboard metrics at read time. It is not persisted
+in a separate table in Phase 3.
+
+The dashboard metrics response now includes:
+
+- `scrollDepth.totalScrollEvents`
+- `scrollDepth.sessionsWithScrollDepth`
+- `scrollDepth.averageMaxScrollDepth`
+- `scrollDepth.highestScrollDepth`
+- `diagnosis.status`: `not_enough_data` or `ready`
+- `diagnosis.primaryBottleneck`: `insufficient_data`,
+  `low_cta_engagement`, `weak_above_the_fold_interest`, `form_friction`,
+  `good_interest_weak_conversion`, or `healthy_funnel`
+- `diagnosis.title`
+- `diagnosis.summary`
+- `diagnosis.confidence`: `low`, `medium`, or `high`
+- `diagnosis.supportingSignals`: label, value, and description objects
+- `diagnosis.recommendedExperiment`: title, description, target area, and
+  expected impact
+- `diagnosis.createdAt`
+
+Diagnosis rules are deterministic and intentionally small:
+
+- fewer than 5 sessions or fewer than 10 page views means more data is needed
+- healthy form starts with weak submits indicates form friction
+- low average scroll depth plus low CTA click-through indicates weak
+  above-the-fold interest
+- low CTA click-through alone indicates CTA engagement is the bottleneck
+- good scroll depth with weak submits indicates interest is present but
+  conversion is weak
+- otherwise the funnel is treated as healthy enough for an incremental test

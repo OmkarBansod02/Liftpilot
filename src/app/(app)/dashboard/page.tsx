@@ -13,12 +13,18 @@ import { Badge } from "@/components/ui/badge";
 import { MetricCard } from "@/features/analytics/components/metric-card";
 import { ConversionFunnel } from "@/features/analytics/components/conversion-funnel";
 import { DashboardEmpty } from "@/features/analytics/components/dashboard-empty";
+import { DiagnosisCard } from "@/features/analytics/components/diagnosis-card";
 import { getDashboardMetrics } from "@/features/analytics/server/get-dashboard-metrics";
 import { ensureDemoPage } from "@/features/demo/server/ensure-demo-page";
 
 function formatPercent(value: number): string {
   if (value === 0) return "0%";
   return `${(value * 100).toFixed(1)}%`;
+}
+
+function formatDepth(value: number): string {
+  if (value === 0) return "0%";
+  return `${Math.round(value)}%`;
 }
 
 export default async function DashboardPage() {
@@ -33,7 +39,7 @@ export default async function DashboardPage() {
         title="Dashboard"
         description="Monitor visitor behavior and track conversion performance."
       >
-        <Badge variant="secondary">Phase 2</Badge>
+        <Badge variant="secondary">Phase 3</Badge>
       </PageHeader>
 
       {!hasData ? (
@@ -75,6 +81,10 @@ export default async function DashboardPage() {
             />
           </div>
 
+          <div className="mt-6">
+            <DiagnosisCard diagnosis={metrics.diagnosis} />
+          </div>
+
           <div className="mt-6 grid gap-6 lg:grid-cols-2">
             <ConversionFunnel metrics={metrics} />
 
@@ -86,6 +96,15 @@ export default async function DashboardPage() {
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   CTA clicks / total sessions
+                </p>
+              </div>
+              <div className="rounded-xl border bg-card p-6">
+                <h3 className="text-sm font-semibold">Average Max Scroll</h3>
+                <p className="mt-2 text-3xl font-bold tabular-nums">
+                  {formatDepth(metrics.scrollDepth.averageMaxScrollDepth)}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Deepest scroll milestone averaged across sessions
                 </p>
               </div>
               <div className="rounded-xl border bg-card p-6">

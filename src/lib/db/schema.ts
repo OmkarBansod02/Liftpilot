@@ -53,9 +53,23 @@ export interface AuditFinding {
 
 export interface VariantContent {
   headline: string;
-  subheadline?: string;
-  ctaLabel: string;
-  trustSignals?: string[];
+  subheadline: string;
+  primaryCtaLabel: string;
+  trustProofRow: string[];
+  targetArea: "hero" | "primary_cta" | "trust_proof" | "signup_form";
+  expectedImpact: string;
+  sourceDiagnosis: {
+    primaryBottleneck:
+      | "insufficient_data"
+      | "low_cta_engagement"
+      | "weak_above_the_fold_interest"
+      | "form_friction"
+      | "good_interest_weak_conversion"
+      | "healthy_funnel";
+    title: string;
+    recommendedExperimentTitle: string;
+  };
+  source: "ai" | "deterministic_fallback";
 }
 
 const timestamps = () => ({

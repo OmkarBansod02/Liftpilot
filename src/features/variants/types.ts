@@ -49,3 +49,21 @@ export interface VariantGenerationContext {
   metrics: DashboardMetrics;
   diagnosis: DashboardDiagnosis;
 }
+
+export type SerializedVariantProposal = Omit<
+  VariantProposal,
+  "createdAt" | "updatedAt"
+> & {
+  createdAt: string;
+  updatedAt: string;
+};
+
+export function serializeVariantProposal(
+  v: VariantProposal,
+): SerializedVariantProposal {
+  return {
+    ...v,
+    createdAt: v.createdAt.toISOString(),
+    updatedAt: v.updatedAt.toISOString(),
+  };
+}

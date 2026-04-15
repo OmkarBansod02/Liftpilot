@@ -60,9 +60,16 @@ Dashboard metrics are computed directly from `sessions` and `events`:
 
 - total sessions
 - total page views
-- CTA clicks and click-through rate
-- form starts and form start rate
-- form submits and form submit rate
+- raw CTA click events and unique-session click-through rate
+- raw form start events and unique-session form start rate
+- raw form submit events and unique-session form submit rate
+
+Dashboard conversion rates use unique sessions:
+
+- CTA click-through rate: sessions with at least one `cta_click` / total
+  sessions
+- form start rate: sessions with at least one `form_start` / total sessions
+- form submit rate: sessions with at least one `form_submit` / total sessions
 
 ## Phase 3 Diagnosis Contract
 

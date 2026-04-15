@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { sessions, events } from "@/lib/db/schema";
-import { and, eq, count } from "drizzle-orm";
+import { and, eq, count, countDistinct } from "drizzle-orm";
 import { diagnoseDashboardMetrics } from "@/features/analytics/lib/diagnose-dashboard-metrics";
 import type {
   DashboardMetrics,
@@ -17,7 +17,7 @@ interface ScrollDepthEventRow {
 
 function calculateRate(numerator: number, denominator: number): number {
   if (denominator === 0) return 0;
-  return numerator / denominator;
+  return Math.min(numerator / denominator, 1);
 }
 
 function readScrollDepth(payload: Record<string, unknown>): ScrollDepth | null {
@@ -64,40 +64,55 @@ function calculateScrollDepthSummary(
 export async function getDashboardMetrics(
   pageId: string,
 ): Promise<DashboardMetrics> {
-  const [sessionCounts, eventCounts, scrollRows] = await Promise.all([
-    db
-      .select({ total: count() })
-      .from(sessions)
-      .where(eq(sessions.pageId, pageId)),
-    db
-      .select({
-        eventType: events.eventType,
-        total: count(),
-      })
-      .from(events)
-      .where(eq(events.pageId, pageId))
-      .groupBy(events.eventType),
-    db
-      .select({
-        sessionId: events.sessionId,
-        payload: events.payload,
-      })
-      .from(events)
-      .where(
-        and(eq(events.pageId, pageId), eq(events.eventType, "scroll_depth")),
-      ),
-  ]);
+  const [sessionCounts, eventCounts, uniqueSessionCounts, scrollRows] =
+    await Promise.all([
+      db
+        .select({ total: count() })
+        .from(sessions)
+        .where(eq(sessions.pageId, pageId)),
+      db
+        .select({
+          eventType: events.eventType,
+          total: count(),
+        })
+        .from(events)
+        .where(eq(events.pageId, pageId))
+        .groupBy(events.eventType),
+      db
+        .select({
+          eventType: events.eventType,
+          total: countDistinct(events.sessionId),
+        })
+        .from(events)
+        .where(eq(events.pageId, pageId))
+        .groupBy(events.eventType),
+      db
+        .select({
+          sessionId: events.sessionId,
+          payload: events.payload,
+        })
+        .from(events)
+        .where(
+          and(eq(events.pageId, pageId), eq(events.eventType, "scroll_depth")),
+        ),
+    ]);
 
   const totalSessions = sessionCounts[0]?.total ?? 0;
 
   const countByType = new Map(
     eventCounts.map((row) => [row.eventType, row.total]),
   );
+  const uniqueSessionsByType = new Map(
+    uniqueSessionCounts.map((row) => [row.eventType, row.total]),
+  );
 
   const totalPageViews = countByType.get("page_view") ?? 0;
   const ctaClicks = countByType.get("cta_click") ?? 0;
   const formStarts = countByType.get("form_start") ?? 0;
   const formSubmits = countByType.get("form_submit") ?? 0;
+  const sessionsWithCtaClick = uniqueSessionsByType.get("cta_click") ?? 0;
+  const sessionsWithFormStart = uniqueSessionsByType.get("form_start") ?? 0;
+  const sessionsWithFormSubmit = uniqueSessionsByType.get("form_submit") ?? 0;
 
   const metrics: DiagnosisMetricInput = {
     totalSessions,
@@ -105,9 +120,9 @@ export async function getDashboardMetrics(
     ctaClicks,
     formStarts,
     formSubmits,
-    ctaClickThroughRate: calculateRate(ctaClicks, totalSessions),
-    formStartRate: calculateRate(formStarts, totalSessions),
-    formSubmitRate: calculateRate(formSubmits, totalSessions),
+    ctaClickThroughRate: calculateRate(sessionsWithCtaClick, totalSessions),
+    formStartRate: calculateRate(sessionsWithFormStart, totalSessions),
+    formSubmitRate: calculateRate(sessionsWithFormSubmit, totalSessions),
     scrollDepth: calculateScrollDepthSummary(totalSessions, scrollRows),
   };
 

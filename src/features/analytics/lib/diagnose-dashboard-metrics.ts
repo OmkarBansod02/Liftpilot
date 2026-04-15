@@ -16,8 +16,9 @@ const LOW_SCROLL_DEPTH = 50;
 const GOOD_SCROLL_DEPTH = 50;
 
 function formatPercent(rate: number): string {
-  if (rate === 0) return "0%";
-  return `${(rate * 100).toFixed(1)}%`;
+  const boundedRate = Math.min(Math.max(rate, 0), 1);
+  if (boundedRate === 0) return "0%";
+  return `${(boundedRate * 100).toFixed(1)}%`;
 }
 
 function formatDepth(depth: number): string {
@@ -41,12 +42,14 @@ function buildCoreSignals(metrics: DiagnosisMetricInput): DiagnosisSignal[] {
     {
       label: "CTA click-through",
       value: formatPercent(metrics.ctaClickThroughRate),
-      description: "CTA clicks divided by total sessions.",
+      description:
+        "Sessions with at least one CTA click divided by total sessions.",
     },
     {
       label: "Form submit rate",
       value: formatPercent(metrics.formSubmitRate),
-      description: "Form submits divided by total sessions.",
+      description:
+        "Sessions with at least one form submit divided by total sessions.",
     },
     {
       label: "Avg. max scroll depth",

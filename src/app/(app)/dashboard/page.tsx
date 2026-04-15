@@ -18,8 +18,9 @@ import { getDashboardMetrics } from "@/features/analytics/server/get-dashboard-m
 import { ensureDemoPage } from "@/features/demo/server/ensure-demo-page";
 
 function formatPercent(value: number): string {
-  if (value === 0) return "0%";
-  return `${(value * 100).toFixed(1)}%`;
+  const boundedValue = Math.min(Math.max(value, 0), 1);
+  if (boundedValue === 0) return "0%";
+  return `${(boundedValue * 100).toFixed(1)}%`;
 }
 
 function formatDepth(value: number): string {
@@ -64,19 +65,19 @@ export default async function DashboardPage() {
             <MetricCard
               title="CTA Clicks"
               value={metrics.ctaClicks.toLocaleString()}
-              description={`${formatPercent(metrics.ctaClickThroughRate)} click-through`}
+              description={`${formatPercent(metrics.ctaClickThroughRate)} of sessions clicked`}
               icon={MousePointerClick}
             />
             <MetricCard
               title="Form Starts"
               value={metrics.formStarts.toLocaleString()}
-              description={`${formatPercent(metrics.formStartRate)} engagement`}
+              description={`${formatPercent(metrics.formStartRate)} of sessions started`}
               icon={FormInput}
             />
             <MetricCard
               title="Form Submits"
               value={metrics.formSubmits.toLocaleString()}
-              description={`${formatPercent(metrics.formSubmitRate)} submit rate`}
+              description={`${formatPercent(metrics.formSubmitRate)} of sessions submitted`}
               icon={Send}
             />
           </div>
@@ -95,7 +96,7 @@ export default async function DashboardPage() {
                   {formatPercent(metrics.ctaClickThroughRate)}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  CTA clicks / total sessions
+                  Sessions with a CTA click / total sessions
                 </p>
               </div>
               <div className="rounded-xl border bg-card p-6 ring-1 ring-foreground/10">
@@ -113,7 +114,7 @@ export default async function DashboardPage() {
                   {formatPercent(metrics.formSubmitRate)}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Form submits / total sessions
+                  Sessions with a form submit / total sessions
                 </p>
               </div>
             </div>

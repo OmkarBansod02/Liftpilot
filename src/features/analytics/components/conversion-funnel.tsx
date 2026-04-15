@@ -10,7 +10,7 @@ import type { DashboardMetrics } from "@/features/analytics/types";
 interface FunnelStep {
   label: string;
   count: number;
-  rate: string;
+  sessionRate: number;
 }
 
 function buildFunnelSteps(metrics: DashboardMetrics): FunnelStep[] {
@@ -18,29 +18,30 @@ function buildFunnelSteps(metrics: DashboardMetrics): FunnelStep[] {
     {
       label: "Page Views",
       count: metrics.totalPageViews,
-      rate: "100%",
+      sessionRate: 1,
     },
     {
       label: "CTA Clicks",
       count: metrics.ctaClicks,
-      rate: formatPercent(metrics.ctaClickThroughRate),
+      sessionRate: metrics.ctaClickThroughRate,
     },
     {
       label: "Form Starts",
       count: metrics.formStarts,
-      rate: formatPercent(metrics.formStartRate),
+      sessionRate: metrics.formStartRate,
     },
     {
       label: "Form Submits",
       count: metrics.formSubmits,
-      rate: formatPercent(metrics.formSubmitRate),
+      sessionRate: metrics.formSubmitRate,
     },
   ];
 }
 
 function formatPercent(value: number): string {
-  if (value === 0) return "0%";
-  return `${(value * 100).toFixed(1)}%`;
+  const boundedValue = Math.min(Math.max(value, 0), 1);
+  if (boundedValue === 0) return "0%";
+  return `${(boundedValue * 100).toFixed(1)}%`;
 }
 
 interface ConversionFunnelProps {
@@ -49,26 +50,27 @@ interface ConversionFunnelProps {
 
 export function ConversionFunnel({ metrics }: ConversionFunnelProps) {
   const steps = buildFunnelSteps(metrics);
-  const maxCount = Math.max(...steps.map((s) => s.count), 1);
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Conversion Funnel</CardTitle>
         <CardDescription>
-          How visitors move through the page
+          Raw event totals with unique-session conversion rates
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
           {steps.map((step) => {
-            const width = Math.max((step.count / maxCount) * 100, 2);
+            const width = Math.max(step.sessionRate * 100, 2);
+
             return (
               <div key={step.label}>
                 <div className="mb-1 flex items-baseline justify-between text-sm">
                   <span className="font-medium">{step.label}</span>
                   <span className="text-muted-foreground tabular-nums">
-                    {step.count.toLocaleString()} · {step.rate}
+                    {step.count.toLocaleString()} events -{" "}
+                    {formatPercent(step.sessionRate)} sessions
                   </span>
                 </div>
                 <div className="h-2 w-full rounded-full bg-muted">

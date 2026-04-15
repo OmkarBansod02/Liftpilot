@@ -16,6 +16,10 @@ import { DashboardEmpty } from "@/features/analytics/components/dashboard-empty"
 import { DiagnosisSection } from "@/features/analytics/components/diagnosis-section";
 import { getDashboardMetrics } from "@/features/analytics/server/get-dashboard-metrics";
 import { ensureDemoPage } from "@/features/demo/server/ensure-demo-page";
+import { VariantSection } from "@/features/variants/components/variant-section";
+import { buildDemoPageBaseline } from "@/features/variants/lib/build-demo-baseline";
+import { getLatestPendingVariant } from "@/features/variants/server/get-latest-pending-variant";
+import { serializeVariantProposal } from "@/features/variants/types";
 
 function formatPercent(value: number): string {
   const boundedValue = Math.min(Math.max(value, 0), 1);
@@ -30,9 +34,17 @@ function formatDepth(value: number): string {
 
 export default async function DashboardPage() {
   const { pageId } = await ensureDemoPage();
-  const metrics = await getDashboardMetrics(pageId);
+  const [metrics, existingVariant] = await Promise.all([
+    getDashboardMetrics(pageId),
+    getLatestPendingVariant({ pageId }),
+  ]);
 
   const hasData = metrics.totalSessions > 0;
+  const diagnosisReady = metrics.diagnosis.status === "ready";
+  const baseline = buildDemoPageBaseline();
+  const serializedVariant = existingVariant
+    ? serializeVariantProposal(existingVariant)
+    : null;
 
   return (
     <PageContainer>
@@ -40,7 +52,7 @@ export default async function DashboardPage() {
         title="Dashboard"
         description="Monitor visitor behavior and track conversion performance."
       >
-        <Badge variant="secondary">Phase 3</Badge>
+        <Badge variant="secondary">Phase 4</Badge>
       </PageHeader>
 
       {!hasData ? (
@@ -85,6 +97,16 @@ export default async function DashboardPage() {
           <div className="mt-8">
             <DiagnosisSection diagnosis={metrics.diagnosis} />
           </div>
+
+          {diagnosisReady && (
+            <div className="mt-8">
+              <VariantSection
+                pageId={pageId}
+                baseline={baseline}
+                initialVariant={serializedVariant}
+              />
+            </div>
+          )}
 
           <div className="mt-8 grid gap-6 lg:grid-cols-2">
             <ConversionFunnel metrics={metrics} />

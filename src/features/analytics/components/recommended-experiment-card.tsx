@@ -1,6 +1,4 @@
-import { Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import type { RecommendedExperiment } from "@/features/analytics/types";
 
 interface RecommendedExperimentCardProps {
@@ -28,15 +26,11 @@ export function RecommendedExperimentCard({
         {experiment.description}
       </p>
 
-      <div className="mt-4 flex items-center justify-between gap-4 border-t pt-4">
+      <div className="mt-4 border-t pt-4">
         <p className="text-xs text-muted-foreground">
           <span className="font-medium">Expected impact:</span>{" "}
           {experiment.expectedImpact}
         </p>
-        <Button variant="outline" size="sm" disabled className="shrink-0 gap-2">
-          <Sparkles className="size-3.5" />
-          Generate variant
-        </Button>
       </div>
     </div>
   );

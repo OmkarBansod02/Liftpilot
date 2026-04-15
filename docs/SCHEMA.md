@@ -17,7 +17,9 @@ Liftpilot into a generic analytics or experimentation platform.
 - `events`: validated snippet events. Stores session, page, event type, a small
   typed payload JSON object, and occurrence time.
 - `variants`: one generated variant proposal. Stores page, optional source
-  audit, approval status, structured variant content, and rationale.
+  audit, approval status, structured variant content, and rationale. Phase 4
+  stores the proposal as one pending approval candidate, not as a generic
+  multi-variant framework.
 - `experiments`: one A/B test for a page and variant. Stores status, primary
   conversion event, and lifecycle timestamps.
 - `conversions`: conversion attribution for an experiment arm. Stores
@@ -104,3 +106,38 @@ Diagnosis rules are deterministic and intentionally small:
 - good scroll depth with weak submits indicates interest is present but
   conversion is weak
 - otherwise the funnel is treated as healthy enough for an incremental test
+
+## Phase 4 Variant Proposal Contract
+
+Variant generation reads the current dashboard diagnosis at request time and
+uses the structured demo page baseline. The backend owns validation,
+persistence, and approval status; AI may only draft the proposal content.
+
+`POST /api/variants` accepts:
+
+- `pageId`: UUID for the page to optimize
+
+The backend rejects generation when the diagnosis is not ready. A saved variant
+always starts with:
+
+- `status`: `pending_approval`
+- `rationale`: the validated proposal rationale
+- `content.headline`
+- `content.subheadline`
+- `content.primaryCtaLabel`
+- `content.trustProofRow`: 1 to 4 proof snippets
+- `content.targetArea`: `hero`, `primary_cta`, `trust_proof`, or
+  `signup_form`
+- `content.expectedImpact`
+- `content.sourceDiagnosis.primaryBottleneck`
+- `content.sourceDiagnosis.title`
+- `content.sourceDiagnosis.recommendedExperimentTitle`
+- `content.source`: `ai` or `deterministic_fallback`
+
+`GET /api/variants?pageId=...` returns only the latest
+`pending_approval` variant for the page. This keeps the UI focused on one
+current proposal even if older pending rows exist.
+
+If no AI integration is configured, Phase 4 uses a deterministic fallback
+generator mapped from the known diagnosis bottlenecks. Fallback output is still
+validated through the same zod proposal schema before persistence.

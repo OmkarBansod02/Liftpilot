@@ -22,5 +22,18 @@ export async function getLatestPendingVariant(
 
   const row = latestPendingVariant[0];
 
-  return row ? mapVariantRow(row) : null;
+  if (!row) {
+    console.info(
+      `[variants] No pending variant found for page ${input.pageId}.`,
+    );
+    return null;
+  }
+
+  const variant = mapVariantRow(row);
+
+  console.info(
+    `[variants] Reusing latest pending variant ${variant.id} for page ${input.pageId} with source "${variant.source}".`,
+  );
+
+  return variant;
 }

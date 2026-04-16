@@ -52,10 +52,32 @@ export async function generateVariantProposalForPage(
     diagnosis: metrics.diagnosis,
   };
 
-  const aiProposal = await generateVariantWithAi(context);
-  const rawProposal =
-    aiProposal ??
-    generateFallbackVariant({ baseline, diagnosis: metrics.diagnosis });
+  let aiProposal: unknown | null = null;
+
+  try {
+    aiProposal = await generateVariantWithAi(context);
+  } catch (error) {
+    console.error(
+      `[variants] AI variant generation failed for page ${input.pageId}. Falling back to deterministic variant generation.`,
+      error,
+    );
+  }
+
+  const usingFallback = aiProposal === null;
+
+  if (usingFallback) {
+    console.info(
+      `[variants] Variant generation selected deterministic fallback for page ${input.pageId}.`,
+    );
+  } else {
+    console.info(
+      `[variants] Variant generation selected AI output for page ${input.pageId}.`,
+    );
+  }
+
+  const rawProposal = usingFallback
+    ? generateFallbackVariant({ baseline, diagnosis: metrics.diagnosis })
+    : aiProposal;
   const parsedProposal = variantProposalSchema.safeParse(rawProposal);
 
   if (!parsedProposal.success) {
@@ -76,6 +98,10 @@ export async function generateVariantProposalForPage(
       rationale,
     })
     .returning();
+
+  console.info(
+    `[variants] Saved variant ${insertedVariant.id} for page ${input.pageId} with source "${content.source}" and status "${insertedVariant.status}".`,
+  );
 
   return mapVariantRow(insertedVariant);
 }

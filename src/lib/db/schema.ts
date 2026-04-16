@@ -29,6 +29,7 @@ export const variantStatusEnum = pgEnum("variant_status", [
   "pending_approval",
   "approved",
   "rejected",
+  "deployed",
 ]);
 
 export const experimentStatusEnum = pgEnum("experiment_status", [
@@ -72,6 +73,17 @@ export interface VariantContent {
   source: "ai" | "deterministic_fallback";
 }
 
+export interface PageBaselineContent {
+  brand: string;
+  headline: string;
+  subheadline: string;
+  primaryCtaLabel: string;
+  secondaryCtaLabel: string;
+  trustProofRow: string[];
+  formHeadline: string;
+  formDescription: string;
+}
+
 const timestamps = () => ({
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
@@ -96,6 +108,7 @@ export const pages = pgTable(
     primaryConversionEvent: text("primary_conversion_event")
       .default("form_submit")
       .notNull(),
+    baselineContent: jsonb("baseline_content").$type<PageBaselineContent | null>(),
     ...timestamps(),
   },
   (table) => [index("pages_site_id_idx").on(table.siteId)],

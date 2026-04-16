@@ -15,6 +15,13 @@
       "when": 1776092327184,
       "tag": "0001_phase2_tracking_event_type",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776365356309,
+      "tag": "0002_lethal_titania",
+      "breakpoints": true
     }
   ]
 }

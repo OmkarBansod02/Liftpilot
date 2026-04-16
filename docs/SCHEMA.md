@@ -141,3 +141,52 @@ current proposal even if older pending rows exist.
 If no AI integration is configured, Phase 4 uses a deterministic fallback
 generator mapped from the known diagnosis bottlenecks. Fallback output is still
 validated through the same zod proposal schema before persistence.
+
+## Phase 5 Experiment Runtime Contract
+
+Approving a variant creates the first narrow A/B runtime for the demo page.
+No database shape changes were needed because Phase 0 already included
+experiment context on sessions and a conversion attribution table.
+
+`POST /api/experiments` accepts:
+
+- `pageId`: UUID for the demo page
+
+The backend then:
+
+- finds the latest `pending_approval` variant for that page
+- rejects the request if a `running` experiment already exists for the page
+- marks the variant as `approved`
+- creates one `running` experiment using the page primary conversion event
+- sets `started_at`
+
+Runtime assignment is deterministic and intentionally small:
+
+- supported arms are `control` and `variant`
+- the browser keeps a stable anonymous ID in local storage
+- the demo runtime hashes `experimentId + anonymousId`
+- buckets below 50 render `control`; buckets 50 and above render `variant`
+- the selected arm is also stored in a short browser cookie for reuse
+
+Session creation now accepts optional experiment context:
+
+- `experimentId`
+- `variantArm`: `control` or `variant`
+
+The server only persists that context when the experiment exists, belongs to
+the same page, and is currently `running`.
+
+Tracked events may include experiment context in their stored payload. Events
+remain linked to sessions, and sessions store the canonical experiment arm.
+When a tracked event matches the experiment primary conversion event, the
+server inserts a conversion row with:
+
+- `experiment_id`
+- `session_id`
+- `page_id`
+- `arm`
+- `event_name`
+
+Phase 5 intentionally does not include winner deployment, advanced statistics,
+multi-page experiments, multiple active experiments, or a generalized
+experimentation framework.

@@ -81,5 +81,11 @@ export function VariantSection({
     );
   }
 
-  return <VariantProposalCard variant={state.variant} baseline={baseline} />;
+  return (
+    <VariantProposalCard
+      variant={state.variant}
+      baseline={baseline}
+      onApproved={(variant) => setState({ status: "success", variant })}
+    />
+  );
 }

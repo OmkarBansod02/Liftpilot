@@ -10,38 +10,48 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ensureDemoPage } from "@/features/demo/server/ensure-demo-page";
+import { RunningExperimentCard } from "@/features/experiments/components/running-experiment-card";
+import { getRunningExperimentSummary } from "@/features/experiments/server/get-running-experiment-summary";
 
-export default function ExperimentsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ExperimentsPage() {
+  const { pageId } = await ensureDemoPage();
+  const runningExperiment = await getRunningExperimentSummary(pageId);
+
   return (
     <PageContainer>
       <PageHeader
         title="Experiments"
         description="Review, approve, and track A/B tests on your landing page."
       >
-        <Badge variant="secondary">Phase 1</Badge>
+        <Badge variant="secondary">Phase 5</Badge>
       </PageHeader>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
-        {/* Empty state */}
-        <Card className="lg:col-span-2">
-          <CardContent className="py-6">
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="flex size-12 items-center justify-center rounded-xl bg-muted">
-                <FlaskConical className="size-6 text-muted-foreground" />
+        {runningExperiment ? (
+          <RunningExperimentCard experiment={runningExperiment} />
+        ) : (
+          <Card className="lg:col-span-2">
+            <CardContent className="py-6">
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="flex size-12 items-center justify-center rounded-xl bg-muted">
+                  <FlaskConical className="size-6 text-muted-foreground" />
+                </div>
+                <h3 className="mt-4 font-semibold">No experiments yet</h3>
+                <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+                  Experiments are created after the system diagnoses a friction
+                  point and generates an improved variant for your approval.
+                </p>
+                <Button variant="outline" size="sm" className="mt-6" disabled>
+                  Create experiment
+                </Button>
               </div>
-              <h3 className="mt-4 font-semibold">No experiments yet</h3>
-              <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-                Experiments are created after the system diagnoses a friction
-                point and generates an improved variant for your approval.
-              </p>
-              <Button variant="outline" size="sm" className="mt-6" disabled>
-                Create experiment
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
-        {/* How it works */}
         <Card>
           <CardHeader>
             <CardTitle>How experiments work</CardTitle>
@@ -77,7 +87,7 @@ export default function ExperimentsPage() {
                 <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
                   5
                 </span>
-                Deploy the winner
+                Winner deployment comes after Phase 5
               </li>
             </ol>
           </CardContent>

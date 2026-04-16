@@ -1,5 +1,13 @@
+import { zodTextFormat } from "openai/helpers/zod";
+import { getOpenAiClient } from "@/lib/ai/openai-client";
 import type { VariantGenerationContext } from "@/features/variants/types";
+import {
+  variantProposalSchema,
+  type VariantProposalInput,
+} from "@/features/variants/schemas/variant-input";
 import { env } from "@/lib/env";
+
+const VARIANT_GENERATION_MODEL = "gpt-4.1-mini";
 
 interface VariantAiPrompt {
   system: string;
@@ -9,7 +17,13 @@ interface VariantAiPrompt {
 function buildVariantAiPrompt(context: VariantGenerationContext): VariantAiPrompt {
   return {
     system:
-      "Generate exactly one landing-page variant proposal as strict JSON. Do not include experiment setup, traffic splitting, deployment, or arbitrary page edits.",
+      [
+        "Generate exactly one improved landing-page variant proposal.",
+        "Return only the structured fields requested by the schema.",
+        'Set source to exactly "ai".',
+        "Do not include experiment setup, traffic splitting, deployment, or arbitrary page edits.",
+        "Keep copy specific, believable, and close to the baseline product.",
+      ].join(" "),
     user: JSON.stringify(
       {
         baseline: context.baseline,
@@ -47,13 +61,52 @@ function buildVariantAiPrompt(context: VariantGenerationContext): VariantAiPromp
 
 export async function generateVariantWithAi(
   context: VariantGenerationContext,
-): Promise<unknown | null> {
+): Promise<VariantProposalInput | null> {
   if (!env.OPENAI_API_KEY) {
+    console.info(
+      `[variants] OPENAI_API_KEY is missing for page ${context.pageId}. Using deterministic fallback variant generation.`,
+    );
+    return null;
+  }
+
+  const client = getOpenAiClient();
+
+  if (!client) {
+    console.info(
+      `[variants] OpenAI client could not be initialized for page ${context.pageId}. Using deterministic fallback variant generation.`,
+    );
     return null;
   }
 
   const prompt = buildVariantAiPrompt(context);
-  void prompt;
+  console.info(
+    `[variants] OPENAI_API_KEY detected for page ${context.pageId}. Requesting AI variant generation with ${VARIANT_GENERATION_MODEL}.`,
+  );
 
-  return null;
+  const response = await client.responses.parse({
+    model: VARIANT_GENERATION_MODEL,
+    instructions: prompt.system,
+    input: prompt.user,
+    text: {
+      format: zodTextFormat(variantProposalSchema, "variant_proposal"),
+    },
+  });
+
+  if (!response.output_parsed) {
+    console.warn(
+      `[variants] OpenAI returned no parsed variant proposal for page ${context.pageId}. Using deterministic fallback variant generation.`,
+    );
+    return null;
+  }
+
+  const proposal = variantProposalSchema.parse({
+    ...response.output_parsed,
+    source: "ai",
+  });
+
+  console.info(
+    `[variants] OpenAI returned a valid variant proposal for page ${context.pageId}.`,
+  );
+
+  return proposal;
 }

@@ -7,10 +7,16 @@ import { Button } from "@/components/ui/button";
 import { BaselineVsVariant } from "@/features/variants/components/baseline-vs-variant";
 import type { DemoPageBaseline, SerializedVariantProposal } from "@/features/variants/types";
 
+export interface ApprovalResult {
+  variant: SerializedVariantProposal;
+  experimentId: string;
+  primaryConversionEvent: string;
+}
+
 interface VariantProposalCardProps {
   variant: SerializedVariantProposal;
   baseline: DemoPageBaseline;
-  onApproved: (variant: SerializedVariantProposal) => void;
+  onApproved: (result: ApprovalResult) => void;
 }
 
 function formatTargetArea(area: string): string {
@@ -54,9 +60,17 @@ export function VariantProposalCard({
       }
 
       const data = (await response.json()) as {
+        experiment: {
+          id: string;
+          primaryConversionEvent: string;
+        };
         variant: SerializedVariantProposal;
       };
-      onApproved(data.variant);
+      onApproved({
+        variant: data.variant,
+        experimentId: data.experiment.id,
+        primaryConversionEvent: data.experiment.primaryConversionEvent,
+      });
     } catch {
       setErrorMessage("Network error while approving the variant.");
     } finally {

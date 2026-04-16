@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { ExperimentStartedCard } from "@/features/experiments/components/experiment-started-card";
 import { VariantGenerationCta } from "@/features/variants/components/variant-generation-cta";
 import { VariantLoading } from "@/features/variants/components/variant-loading";
 import { VariantError } from "@/features/variants/components/variant-error";
 import { VariantProposalCard } from "@/features/variants/components/variant-proposal-card";
+import type { ApprovalResult } from "@/features/variants/components/variant-proposal-card";
 import type { DemoPageBaseline, SerializedVariantProposal } from "@/features/variants/types";
 
 interface VariantSectionProps {
@@ -13,18 +15,19 @@ interface VariantSectionProps {
   initialVariant: SerializedVariantProposal | null;
 }
 
-type GenerationState =
+type SectionState =
   | { status: "idle" }
   | { status: "loading" }
   | { status: "error"; message: string }
-  | { status: "success"; variant: SerializedVariantProposal };
+  | { status: "success"; variant: SerializedVariantProposal }
+  | { status: "experiment_started"; approval: ApprovalResult };
 
 export function VariantSection({
   pageId,
   baseline,
   initialVariant,
 }: VariantSectionProps) {
-  const [state, setState] = useState<GenerationState>(
+  const [state, setState] = useState<SectionState>(
     initialVariant
       ? { status: "success", variant: initialVariant }
       : { status: "idle" },
@@ -81,11 +84,22 @@ export function VariantSection({
     );
   }
 
+  if (state.status === "experiment_started") {
+    return (
+      <ExperimentStartedCard
+        variantHeadline={state.approval.variant.headline}
+        primaryConversionEvent={state.approval.primaryConversionEvent}
+      />
+    );
+  }
+
   return (
     <VariantProposalCard
       variant={state.variant}
       baseline={baseline}
-      onApproved={(variant) => setState({ status: "success", variant })}
+      onApproved={(result) =>
+        setState({ status: "experiment_started", approval: result })
+      }
     />
   );
 }

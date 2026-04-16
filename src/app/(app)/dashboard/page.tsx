@@ -16,10 +16,10 @@ import { DashboardEmpty } from "@/features/analytics/components/dashboard-empty"
 import { DiagnosisSection } from "@/features/analytics/components/diagnosis-section";
 import { getDashboardMetrics } from "@/features/analytics/server/get-dashboard-metrics";
 import { ensureDemoPage } from "@/features/demo/server/ensure-demo-page";
+import { getDemoPageBaseline } from "@/features/demo/server/get-demo-page-baseline";
 import { RunningExperimentCard } from "@/features/experiments/components/running-experiment-card";
 import { getRunningExperimentSummary } from "@/features/experiments/server/get-running-experiment-summary";
 import { VariantSection } from "@/features/variants/components/variant-section";
-import { buildDemoPageBaseline } from "@/features/variants/lib/build-demo-baseline";
 import { getLatestPendingVariant } from "@/features/variants/server/get-latest-pending-variant";
 import { serializeVariantProposal } from "@/features/variants/types";
 
@@ -36,9 +36,10 @@ function formatDepth(value: number): string {
 
 export default async function DashboardPage() {
   const { pageId } = await ensureDemoPage();
-  const [metrics, runningExperiment] = await Promise.all([
+  const [metrics, runningExperiment, baseline] = await Promise.all([
     getDashboardMetrics(pageId),
     getRunningExperimentSummary(pageId),
+    getDemoPageBaseline(pageId),
   ]);
   const existingVariant = runningExperiment
     ? null
@@ -46,7 +47,6 @@ export default async function DashboardPage() {
 
   const hasData = metrics.totalSessions > 0;
   const diagnosisReady = metrics.diagnosis.status === "ready";
-  const baseline = buildDemoPageBaseline();
   const serializedVariant = existingVariant
     ? serializeVariantProposal(existingVariant)
     : null;
@@ -57,7 +57,7 @@ export default async function DashboardPage() {
         title="Dashboard"
         description="Monitor visitor behavior and track conversion performance."
       >
-        <Badge variant="secondary">Phase 5</Badge>
+        <Badge variant="secondary">Phase 6</Badge>
       </PageHeader>
 
       {!hasData ? (

@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { demoContent } from "@/features/demo/lib/demo-content";
-import type { DemoExperimentRuntime } from "@/features/demo/types";
+import type {
+  DemoExperimentRuntime,
+  DemoPageBaseline,
+} from "@/features/demo/types";
 import { assignExperimentArm } from "@/features/experiments/lib/assign-experiment-arm";
 import type { ExperimentAssignment } from "@/features/experiments/types";
 import { getOrCreateAnonymousId } from "@/features/snippet/client/anonymous-id";
@@ -14,15 +16,6 @@ import { DemoFeatures } from "./demo-features";
 import { DemoHero, type DemoHeroContent } from "./demo-hero";
 import { DemoSignupForm } from "./demo-signup-form";
 import { DemoSocialProof } from "./demo-social-proof";
-
-const CONTROL_HERO_CONTENT: DemoHeroContent = {
-  brand: demoContent.brand,
-  headline: demoContent.headline,
-  subheadline: demoContent.subheadline,
-  primaryCtaLabel: demoContent.ctaLabel,
-  secondaryCtaLabel: demoContent.secondaryCta,
-  trustProofRow: [],
-};
 
 function getAssignmentCookieName(experimentId: string): string {
   return `liftpilot_exp_${experimentId}`;
@@ -66,19 +59,27 @@ function resolveAssignment(
 }
 
 function buildHeroContent(
+  baseline: DemoPageBaseline,
   experimentRuntime: DemoExperimentRuntime | null,
   assignment: ExperimentAssignment | null,
 ): DemoHeroContent {
   if (!experimentRuntime || assignment?.variantArm !== "variant") {
-    return CONTROL_HERO_CONTENT;
+    return {
+      brand: baseline.brand,
+      headline: baseline.headline,
+      subheadline: baseline.subheadline,
+      primaryCtaLabel: baseline.primaryCtaLabel,
+      secondaryCtaLabel: baseline.secondaryCtaLabel,
+      trustProofRow: baseline.trustProofRow,
+    };
   }
 
   return {
-    brand: demoContent.brand,
+    brand: baseline.brand,
     headline: experimentRuntime.variant.headline,
     subheadline: experimentRuntime.variant.subheadline,
     primaryCtaLabel: experimentRuntime.variant.primaryCtaLabel,
-    secondaryCtaLabel: demoContent.secondaryCta,
+    secondaryCtaLabel: baseline.secondaryCtaLabel,
     trustProofRow: experimentRuntime.variant.trustProofRow,
   };
 }
@@ -103,11 +104,13 @@ function TrackedContent({
 
 interface DemoPageClientProps {
   pageId: string;
+  baseline: DemoPageBaseline;
   experimentRuntime: DemoExperimentRuntime | null;
 }
 
 export function DemoPageClient({
   pageId,
+  baseline,
   experimentRuntime,
 }: DemoPageClientProps) {
   const [assignment, setAssignment] = useState<ExperimentAssignment | null>(
@@ -125,8 +128,8 @@ export function DemoPageClient({
   }, [experimentRuntime]);
 
   const heroContent = useMemo(
-    () => buildHeroContent(experimentRuntime, assignment),
-    [assignment, experimentRuntime],
+    () => buildHeroContent(baseline, experimentRuntime, assignment),
+    [assignment, baseline, experimentRuntime],
   );
 
   const experimentContext = experimentRuntime ? assignment : null;

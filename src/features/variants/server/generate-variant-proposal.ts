@@ -1,5 +1,5 @@
 import { getDashboardMetrics } from "@/features/analytics/server/get-dashboard-metrics";
-import { buildDemoPageBaseline } from "@/features/variants/lib/build-demo-baseline";
+import { getDemoPageBaseline } from "@/features/demo/server/get-demo-page-baseline";
 import { generateFallbackVariant } from "@/features/variants/lib/generate-fallback-variant";
 import { mapVariantRow } from "@/features/variants/lib/map-variant-row";
 import { VariantError } from "@/features/variants/lib/variant-errors";
@@ -44,7 +44,7 @@ export async function generateVariantProposalForPage(
     );
   }
 
-  const baseline = buildDemoPageBaseline();
+  const baseline = await getDemoPageBaseline(input.pageId);
   const context = {
     pageId: input.pageId,
     baseline,

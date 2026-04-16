@@ -2,6 +2,7 @@ import type {
   DashboardDiagnosis,
   DashboardMetrics,
 } from "@/features/analytics/types";
+import type { DemoPageBaseline } from "@/features/demo/types";
 import type {
   VariantGenerationSource,
   VariantSourceDiagnosis,
@@ -12,18 +13,10 @@ export type VariantStatus =
   | "draft"
   | "pending_approval"
   | "approved"
-  | "rejected";
+  | "rejected"
+  | "deployed";
 
-export interface DemoPageBaseline {
-  brand: string;
-  headline: string;
-  subheadline: string;
-  primaryCtaLabel: string;
-  secondaryCtaLabel: string;
-  trustProofRow: string[];
-  formHeadline: string;
-  formDescription: string;
-}
+export type { DemoPageBaseline };
 
 export interface VariantProposal {
   id: string;

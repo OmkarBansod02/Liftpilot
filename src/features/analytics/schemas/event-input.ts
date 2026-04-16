@@ -14,6 +14,8 @@ const pageTextSchema = z.string().trim().min(1).max(512);
 const baseEventInputSchema = z.object({
   pageId: z.string().uuid(),
   sessionId: z.string().uuid(),
+  experimentId: z.string().uuid().optional(),
+  variantArm: z.enum(["control", "variant"]).optional(),
   occurredAt: z.string().datetime().optional(),
 });
 

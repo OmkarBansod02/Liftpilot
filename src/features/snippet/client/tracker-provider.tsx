@@ -13,6 +13,11 @@ import type {
   SnippetEventPayloadByType,
   SnippetEventType,
 } from "@/features/analytics/schemas/event-input";
+import type {
+  ExperimentArm,
+  ExperimentAssignment,
+} from "@/features/experiments/types";
+import { getOrCreateAnonymousId } from "@/features/snippet/client/anonymous-id";
 
 type TrackArgs<EventType extends SnippetEventType> =
   Record<string, never> extends SnippetEventPayloadByType[EventType]
@@ -28,51 +33,68 @@ interface TrackerContextValue {
   pageId: string;
   sessionId: string | null;
   ready: boolean;
+  experimentId: string | null;
+  variantArm: ExperimentArm | null;
   track: TrackSnippetEvent;
 }
 
 const TrackerContext = createContext<TrackerContextValue | null>(null);
 
-const ANON_ID_KEY = "liftpilot_anon_id";
-
-function getOrCreateAnonId(): string {
-  if (typeof window === "undefined") return "";
-  const stored = localStorage.getItem(ANON_ID_KEY);
-  if (stored) return stored;
-  const id = crypto.randomUUID();
-  localStorage.setItem(ANON_ID_KEY, id);
-  return id;
-}
-
 interface TrackerProviderProps {
   pageId: string;
+  experimentContext?: ExperimentAssignment | null;
   children: ReactNode;
 }
 
-export function TrackerProvider({ pageId, children }: TrackerProviderProps) {
+export function TrackerProvider({
+  pageId,
+  experimentContext,
+  children,
+}: TrackerProviderProps) {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const ready = sessionId !== null;
+  const experimentId = experimentContext?.experimentId ?? null;
+  const variantArm = experimentContext?.variantArm ?? null;
 
   useEffect(() => {
-    const anonId = getOrCreateAnonId();
+    const anonId = getOrCreateAnonymousId();
     if (!anonId) return;
 
-    initSession({ pageId, anonymousId: anonId }).then((id) => {
+    initSession({
+      pageId,
+      anonymousId: anonId,
+      experimentContext: experimentContext ?? null,
+    }).then((id) => {
       if (id) setSessionId(id);
     });
-  }, [pageId]);
+  }, [experimentContext, pageId]);
 
   const track = useCallback<TrackSnippetEvent>(
     (eventType, ...args) => {
       if (!sessionId) return;
       const payload = args[0];
-      trackEvent({ pageId, sessionId, eventType, payload });
+      trackEvent({
+        pageId,
+        sessionId,
+        eventType,
+        payload,
+        experimentContext: experimentContext ?? null,
+      });
     },
-    [pageId, sessionId],
+    [experimentContext, pageId, sessionId],
   );
 
   return (
-    <TrackerContext.Provider value={{ pageId, sessionId, ready, track }}>
+    <TrackerContext.Provider
+      value={{
+        pageId,
+        sessionId,
+        ready,
+        experimentId,
+        variantArm,
+        track,
+      }}
+    >
       {children}
     </TrackerContext.Provider>
   );

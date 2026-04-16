@@ -2,12 +2,14 @@ import type {
   SnippetEventPayloadByType,
   SnippetEventType,
 } from "@/features/analytics/schemas/event-input";
+import type { ExperimentAssignment } from "@/features/experiments/types";
 
 export interface TrackEventParams<EventType extends SnippetEventType> {
   pageId: string;
   sessionId: string;
   eventType: EventType;
   payload?: SnippetEventPayloadByType[EventType];
+  experimentContext?: ExperimentAssignment | null;
 }
 
 export async function trackEvent<EventType extends SnippetEventType>({
@@ -15,6 +17,7 @@ export async function trackEvent<EventType extends SnippetEventType>({
   sessionId,
   eventType,
   payload,
+  experimentContext,
 }: TrackEventParams<EventType>): Promise<boolean> {
   try {
     const response = await fetch("/api/events", {
@@ -25,6 +28,8 @@ export async function trackEvent<EventType extends SnippetEventType>({
         sessionId,
         eventType,
         payload: payload ?? {},
+        experimentId: experimentContext?.experimentId,
+        variantArm: experimentContext?.variantArm,
         occurredAt: new Date().toISOString(),
       }),
     });
@@ -37,6 +42,7 @@ export async function trackEvent<EventType extends SnippetEventType>({
 interface InitSessionParams {
   pageId: string;
   anonymousId: string;
+  experimentContext?: ExperimentAssignment | null;
 }
 
 const pendingSessions = new Map<string, Promise<string | null>>();
@@ -64,6 +70,7 @@ export async function initSession({
 async function createSession({
   pageId,
   anonymousId,
+  experimentContext,
 }: InitSessionParams): Promise<string | null> {
   try {
     const response = await fetch("/api/sessions", {
@@ -72,6 +79,8 @@ async function createSession({
       body: JSON.stringify({
         pageId,
         anonymousId,
+        experimentId: experimentContext?.experimentId,
+        variantArm: experimentContext?.variantArm,
         userAgent: navigator.userAgent,
         referrer: document.referrer || undefined,
       }),

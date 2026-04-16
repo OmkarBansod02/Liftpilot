@@ -2,7 +2,13 @@ import { and, eq } from "drizzle-orm";
 import type { SnippetEventType } from "@/features/analytics/schemas/event-input";
 import type { RecordEventInput } from "@/features/analytics/schemas/event-input";
 import { db } from "@/lib/db";
-import { events, sessions, type JsonObject } from "@/lib/db/schema";
+import {
+  conversions,
+  events,
+  experiments,
+  sessions,
+  type JsonObject,
+} from "@/lib/db/schema";
 
 export type RecordSnippetEventResult =
   | {
@@ -19,8 +25,15 @@ export async function recordSnippetEvent(
   input: RecordEventInput,
 ): Promise<RecordSnippetEventResult> {
   const [session] = await db
-    .select({ id: sessions.id })
+    .select({
+      id: sessions.id,
+      experimentId: sessions.experimentId,
+      experimentArm: sessions.experimentArm,
+      experimentStatus: experiments.status,
+      primaryConversionEvent: experiments.primaryConversionEvent,
+    })
     .from(sessions)
+    .leftJoin(experiments, eq(sessions.experimentId, experiments.id))
     .where(
       and(eq(sessions.id, input.sessionId), eq(sessions.pageId, input.pageId)),
     )
@@ -35,16 +48,46 @@ export async function recordSnippetEvent(
     .set({ lastSeenAt: new Date() })
     .where(eq(sessions.id, session.id));
 
+  const eventContext =
+    session.experimentId && session.experimentArm
+      ? {
+          experimentId: session.experimentId,
+          variantArm: session.experimentArm,
+        }
+      : input.experimentId && input.variantArm
+        ? {
+            experimentId: input.experimentId,
+            variantArm: input.variantArm,
+          }
+        : {};
+  const occurredAt = input.occurredAt ? new Date(input.occurredAt) : new Date();
+
   const [inserted] = await db
     .insert(events)
     .values({
       sessionId: input.sessionId,
       pageId: input.pageId,
       eventType: input.eventType,
-      payload: { ...input.payload } satisfies JsonObject,
-      occurredAt: input.occurredAt ? new Date(input.occurredAt) : new Date(),
+      payload: { ...input.payload, ...eventContext } satisfies JsonObject,
+      occurredAt,
     })
     .returning({ id: events.id });
+
+  if (
+    session.experimentId &&
+    session.experimentArm &&
+    session.experimentStatus === "running" &&
+    input.eventType === session.primaryConversionEvent
+  ) {
+    await db.insert(conversions).values({
+      experimentId: session.experimentId,
+      sessionId: session.id,
+      pageId: input.pageId,
+      arm: session.experimentArm,
+      eventName: input.eventType,
+      occurredAt,
+    });
+  }
 
   return {
     accepted: true,

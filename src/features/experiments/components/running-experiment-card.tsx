@@ -10,6 +10,7 @@ import type { RunningExperimentSummary } from "@/features/experiments/server/get
 
 interface RunningExperimentCardProps {
   experiment: RunningExperimentSummary;
+  showPhase6Note?: boolean;
 }
 
 function formatPercent(value: number): string {
@@ -27,17 +28,24 @@ function formatDate(value: Date | null): string {
   }).format(value);
 }
 
+function formatTargetArea(area: string): string {
+  return area.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export function RunningExperimentCard({
   experiment,
+  showPhase6Note = false,
 }: RunningExperimentCardProps) {
   return (
     <Card className="lg:col-span-2">
       <CardHeader>
         <div className="flex items-start justify-between gap-4">
           <div>
-            <CardTitle>Running A/B test</CardTitle>
+            <CardTitle>
+              {formatTargetArea(experiment.variantTargetArea)} A/B Test
+            </CardTitle>
             <CardDescription>
-              Control vs approved variant on the demo page.
+              Testing an improved variant against the baseline on the demo page.
             </CardDescription>
           </div>
           <Badge>Running</Badge>
@@ -96,10 +104,17 @@ export function RunningExperimentCard({
             {formatDate(experiment.startedAt)}
           </p>
           <p>
-            <span className="font-medium text-foreground">Scope:</span> one demo
-            page
+            <span className="font-medium text-foreground">Split:</span> 50/50
+            traffic
           </p>
         </div>
+
+        {showPhase6Note && (
+          <div className="mt-4 rounded-lg bg-muted/50 px-4 py-3 text-xs text-muted-foreground">
+            Detailed results, statistical analysis, and winner deployment will
+            be available in Phase 6.
+          </div>
+        )}
       </CardContent>
     </Card>
   );

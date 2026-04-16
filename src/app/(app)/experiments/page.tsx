@@ -16,6 +16,14 @@ import { getRunningExperimentSummary } from "@/features/experiments/server/get-r
 
 export const dynamic = "force-dynamic";
 
+const FLOW_STEPS = [
+  "System diagnoses a friction point",
+  "One improved variant is generated",
+  "You review and approve the change",
+  "Traffic is split 50/50 for testing",
+  "Results and winner deployment in Phase 6",
+] as const;
+
 export default async function ExperimentsPage() {
   const { pageId } = await ensureDemoPage();
   const runningExperiment = await getRunningExperimentSummary(pageId);
@@ -31,7 +39,10 @@ export default async function ExperimentsPage() {
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
         {runningExperiment ? (
-          <RunningExperimentCard experiment={runningExperiment} />
+          <RunningExperimentCard
+            experiment={runningExperiment}
+            showPhase6Note
+          />
         ) : (
           <Card className="lg:col-span-2">
             <CardContent className="py-6">
@@ -59,36 +70,14 @@ export default async function ExperimentsPage() {
           </CardHeader>
           <CardContent>
             <ol className="space-y-3 text-sm text-muted-foreground">
-              <li className="flex gap-3">
-                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
-                  1
-                </span>
-                System diagnoses a friction point
-              </li>
-              <li className="flex gap-3">
-                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
-                  2
-                </span>
-                One improved variant is generated
-              </li>
-              <li className="flex gap-3">
-                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
-                  3
-                </span>
-                You review and approve the change
-              </li>
-              <li className="flex gap-3">
-                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
-                  4
-                </span>
-                Traffic is split 50/50 for testing
-              </li>
-              <li className="flex gap-3">
-                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
-                  5
-                </span>
-                Winner deployment comes after Phase 5
-              </li>
+              {FLOW_STEPS.map((step, index) => (
+                <li key={index} className="flex gap-3">
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
+                    {index + 1}
+                  </span>
+                  {step}
+                </li>
+              ))}
             </ol>
           </CardContent>
         </Card>

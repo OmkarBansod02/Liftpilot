@@ -104,7 +104,7 @@ export default async function DashboardPage() {
           </div>
 
           {runningExperiment && (
-            <div className="mt-8 grid gap-6 lg:grid-cols-3">
+            <div className="mt-8">
               <RunningExperimentCard experiment={runningExperiment} />
             </div>
           )}

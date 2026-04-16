@@ -18,6 +18,7 @@ export interface RunningExperimentSummary {
   primaryConversionEvent: string;
   variantHeadline: string;
   variantCtaLabel: string;
+  variantTargetArea: string;
   startedAt: Date | null;
   arms: Record<ExperimentArm, ArmTotals>;
 }
@@ -89,6 +90,7 @@ export async function getRunningExperimentSummary(
     primaryConversionEvent: experiment.primaryConversionEvent,
     variantHeadline: experiment.variant.headline,
     variantCtaLabel: experiment.variant.primaryCtaLabel,
+    variantTargetArea: experiment.variant.targetArea,
     startedAt: experiment.startedAt,
     arms,
   };

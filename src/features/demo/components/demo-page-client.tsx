@@ -9,6 +9,7 @@ import { getOrCreateAnonymousId } from "@/features/snippet/client/anonymous-id";
 import { TrackerProvider } from "@/features/snippet/client/tracker-provider";
 import { usePageView } from "@/features/snippet/client/use-page-view";
 import { useScrollDepth } from "@/features/snippet/client/use-scroll-depth";
+import { DevArmBadge } from "./dev-arm-badge";
 import { DemoFeatures } from "./demo-features";
 import { DemoHero, type DemoHeroContent } from "./demo-hero";
 import { DemoSignupForm } from "./demo-signup-form";
@@ -144,6 +145,7 @@ export function DemoPageClient({
       experimentContext={experimentContext}
     >
       <TrackedContent heroContent={heroContent} />
+      {assignment && <DevArmBadge arm={assignment.variantArm} />}
     </TrackerProvider>
   );
 }

@@ -19,6 +19,27 @@ const baseEventInputSchema = z.object({
   occurredAt: z.string().datetime().optional(),
 });
 
+function validateExperimentContext(
+  input: { experimentId?: string; variantArm?: "control" | "variant" },
+  ctx: z.RefinementCtx,
+): void {
+  if (input.experimentId && !input.variantArm) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["variantArm"],
+      message: "variantArm is required when experimentId is provided.",
+    });
+  }
+
+  if (input.variantArm && !input.experimentId) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["experimentId"],
+      message: "experimentId is required when variantArm is provided.",
+    });
+  }
+}
+
 export const pageViewPayloadSchema = z
   .object({
     path: pageTextSchema.optional(),
@@ -57,38 +78,40 @@ export const formSubmitPayloadSchema = z
   })
   .strict();
 
-export const recordEventInputSchema = z.discriminatedUnion("eventType", [
-  baseEventInputSchema
-    .extend({
-      eventType: z.literal("page_view"),
-      payload: pageViewPayloadSchema.default({}),
-    })
-    .strict(),
-  baseEventInputSchema
-    .extend({
-      eventType: z.literal("scroll_depth"),
-      payload: scrollDepthPayloadSchema,
-    })
-    .strict(),
-  baseEventInputSchema
-    .extend({
-      eventType: z.literal("cta_click"),
-      payload: ctaClickPayloadSchema.default({}),
-    })
-    .strict(),
-  baseEventInputSchema
-    .extend({
-      eventType: z.literal("form_start"),
-      payload: formStartPayloadSchema.default({}),
-    })
-    .strict(),
-  baseEventInputSchema
-    .extend({
-      eventType: z.literal("form_submit"),
-      payload: formSubmitPayloadSchema.default({}),
-    })
-    .strict(),
-]);
+export const recordEventInputSchema = z
+  .discriminatedUnion("eventType", [
+    baseEventInputSchema
+      .extend({
+        eventType: z.literal("page_view"),
+        payload: pageViewPayloadSchema.default({}),
+      })
+      .strict(),
+    baseEventInputSchema
+      .extend({
+        eventType: z.literal("scroll_depth"),
+        payload: scrollDepthPayloadSchema,
+      })
+      .strict(),
+    baseEventInputSchema
+      .extend({
+        eventType: z.literal("cta_click"),
+        payload: ctaClickPayloadSchema.default({}),
+      })
+      .strict(),
+    baseEventInputSchema
+      .extend({
+        eventType: z.literal("form_start"),
+        payload: formStartPayloadSchema.default({}),
+      })
+      .strict(),
+    baseEventInputSchema
+      .extend({
+        eventType: z.literal("form_submit"),
+        payload: formSubmitPayloadSchema.default({}),
+      })
+      .strict(),
+  ])
+  .superRefine(validateExperimentContext);
 
 export type SnippetEventType = z.infer<typeof snippetEventTypeSchema>;
 export type RecordEventInput = z.infer<typeof recordEventInputSchema>;

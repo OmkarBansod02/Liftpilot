@@ -50,15 +50,23 @@ const pendingSessions = new Map<string, Promise<string | null>>();
 export async function initSession({
   pageId,
   anonymousId,
+  experimentContext,
 }: InitSessionParams): Promise<string | null> {
-  const requestKey = `${pageId}:${anonymousId}`;
+  const experimentKey = experimentContext
+    ? `${experimentContext.experimentId}:${experimentContext.variantArm}`
+    : "no-experiment";
+  const requestKey = `${pageId}:${anonymousId}:${experimentKey}`;
   const pendingSession = pendingSessions.get(requestKey);
 
   if (pendingSession) {
     return pendingSession;
   }
 
-  const request = createSession({ pageId, anonymousId }).finally(() => {
+  const request = createSession({
+    pageId,
+    anonymousId,
+    experimentContext,
+  }).finally(() => {
     pendingSessions.delete(requestKey);
   });
 

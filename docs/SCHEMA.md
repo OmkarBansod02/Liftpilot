@@ -8,7 +8,8 @@ Liftpilot into a generic analytics or experimentation platform.
 - `sites`: the tracked website container. Stores a display name, canonical URL,
   and timestamps.
 - `pages`: the landing page being optimized. Stores the owning site, page URL,
-  optional title, and the primary conversion event.
+  optional title, primary conversion event, and the current persisted baseline
+  content used by the demo page.
 - `audits`: a URL audit run for a page. Stores audit status, screenshot URL,
   extracted page signals, deterministic or AI-assisted findings, and one
   recommended experiment.
@@ -30,7 +31,8 @@ Liftpilot into a generic analytics or experimentation platform.
 - `audit_status`: `queued`, `processing`, `completed`, `failed`
 - `event_type`: `page_view`, `scroll_depth`, `cta_click`, `form_start`,
   `form_submit`
-- `variant_status`: `draft`, `pending_approval`, `approved`, `rejected`
+- `variant_status`: `draft`, `pending_approval`, `approved`, `rejected`,
+  `deployed`
 - `experiment_status`: `draft`, `running`, `paused`, `completed`
 - `experiment_arm`: `control`, `variant`
 
@@ -187,6 +189,48 @@ server inserts a conversion row with:
 - `arm`
 - `event_name`
 
-Phase 5 intentionally does not include winner deployment, advanced statistics,
+Phase 5 intentionally did not include winner deployment, advanced statistics,
 multi-page experiments, multiple active experiments, or a generalized
 experimentation framework.
+
+## Phase 6 Experiment Results And Deployment Contract
+
+Phase 6 adds deterministic result calculation and manual winner deployment.
+The database remains intentionally small: `pages.baseline_content` stores the
+current demo baseline, and `variant_status` includes `deployed` for the
+promoted variant state.
+
+Experiment results are computed from persisted attribution records:
+
+- sessions: distinct `sessions.id` grouped by `experiment_id` and
+  `experiment_arm`
+- conversions: distinct `conversions.session_id` grouped by `experiment_id`,
+  `arm`, and the experiment primary conversion event
+- conversion rate: converted sessions / assigned sessions, or `0` when the arm
+  has no sessions
+- absolute lift: variant conversion rate - control conversion rate
+- relative lift percentage: absolute lift / control conversion rate, or `null`
+  when the control rate is `0`
+
+Winner recommendation is deterministic:
+
+- if either arm has `0` sessions, the result is `inconclusive`
+- if rates are equal, the result is `inconclusive`
+- if the variant rate is higher, the recommended winner is `variant`
+- if the control rate is higher, the recommended winner is `control`
+
+`POST /api/experiments/[experimentId]/deploy` performs the manual deployment
+transition. The backend:
+
+- requires the experiment to be `running`
+- recomputes results at deploy time
+- rejects deployment when the recommendation is `inconclusive`
+- completes the experiment for a control winner without changing baseline
+  content
+- for a variant winner, writes the variant hero/CTA content into
+  `pages.baseline_content`, marks the variant as `deployed`, and completes the
+  experiment
+
+Phase 6 intentionally does not include confidence intervals, Bayesian testing,
+automatic deployment, rollback history, CMS integrations, multiple active
+experiments, or a generalized experimentation framework.

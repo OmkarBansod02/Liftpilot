@@ -21,7 +21,7 @@ const FLOW_STEPS = [
   "One improved variant is generated",
   "You review and approve the change",
   "Traffic is split 50/50 for testing",
-  "Results and winner deployment in Phase 6",
+  "Results are calculated and the winner can be deployed",
 ] as const;
 
 export default async function ExperimentsPage() {
@@ -34,14 +34,14 @@ export default async function ExperimentsPage() {
         title="Experiments"
         description="Review, approve, and track A/B tests on your landing page."
       >
-        <Badge variant="secondary">Phase 5</Badge>
+        <Badge variant="secondary">Phase 6</Badge>
       </PageHeader>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
         {runningExperiment ? (
           <RunningExperimentCard
             experiment={runningExperiment}
-            showPhase6Note
+            showDeployAction
           />
         ) : (
           <Card className="lg:col-span-2">

@@ -6,16 +6,29 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DeployWinnerButton } from "@/features/experiments/components/deploy-winner-button";
 import type { RunningExperimentSummary } from "@/features/experiments/server/get-running-experiment-summary";
 
 interface RunningExperimentCardProps {
   experiment: RunningExperimentSummary;
-  showPhase6Note?: boolean;
+  showDeployAction?: boolean;
 }
 
 function formatPercent(value: number): string {
   if (value === 0) return "0%";
   return `${(Math.min(value, 1) * 100).toFixed(1)}%`;
+}
+
+function formatSignedPercentagePoints(value: number): string {
+  if (value === 0) return "0 pts";
+  const sign = value > 0 ? "+" : "";
+  return `${sign}${(value * 100).toFixed(1)} pts`;
+}
+
+function formatRelativeLift(value: number | null): string {
+  if (value === null) return "Not available";
+  const sign = value > 0 ? "+" : "";
+  return `${sign}${value.toFixed(1)}%`;
 }
 
 function formatDate(value: Date | null): string {
@@ -28,13 +41,18 @@ function formatDate(value: Date | null): string {
   }).format(value);
 }
 
+function formatRecommendation(winner: RunningExperimentSummary["recommendedWinner"]) {
+  if (winner === "inconclusive") return "Inconclusive";
+  return winner === "variant" ? "Deploy variant" : "Keep control";
+}
+
 function formatTargetArea(area: string): string {
   return area.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 export function RunningExperimentCard({
   experiment,
-  showPhase6Note = false,
+  showDeployAction = false,
 }: RunningExperimentCardProps) {
   return (
     <Card className="lg:col-span-2">
@@ -62,6 +80,33 @@ export function RunningExperimentCard({
           <p className="mt-1 text-xs text-muted-foreground">
             CTA: {experiment.variantCtaLabel}
           </p>
+        </div>
+
+        <div className="mt-5 grid gap-4 rounded-xl border bg-muted/30 p-4 sm:grid-cols-3">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Absolute lift
+            </p>
+            <p className="mt-1 text-lg font-semibold tabular-nums">
+              {formatSignedPercentagePoints(experiment.lift.absoluteDifference)}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Relative lift
+            </p>
+            <p className="mt-1 text-lg font-semibold tabular-nums">
+              {formatRelativeLift(experiment.lift.relativeLiftPercent)}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Recommendation
+            </p>
+            <p className="mt-1 text-lg font-semibold">
+              {formatRecommendation(experiment.recommendedWinner)}
+            </p>
+          </div>
         </div>
 
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -109,10 +154,12 @@ export function RunningExperimentCard({
           </p>
         </div>
 
-        {showPhase6Note && (
-          <div className="mt-4 rounded-lg bg-muted/50 px-4 py-3 text-xs text-muted-foreground">
-            Detailed results, statistical analysis, and winner deployment will
-            be available in Phase 6.
+        {showDeployAction && (
+          <div className="mt-5 border-t pt-4">
+            <DeployWinnerButton
+              experimentId={experiment.id}
+              recommendedWinner={experiment.recommendedWinner}
+            />
           </div>
         )}
       </CardContent>

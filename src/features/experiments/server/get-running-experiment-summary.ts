@@ -1,8 +1,8 @@
 import { getRunningExperimentForPage } from "@/features/experiments/server/get-running-experiment";
 import type { ExperimentArm } from "@/features/experiments/types";
 import { db } from "@/lib/db";
-import { conversions, sessions } from "@/lib/db/schema";
-import { count, countDistinct, eq } from "drizzle-orm";
+import { events } from "@/lib/db/schema";
+import { and, countDistinct, eq, sql } from "drizzle-orm";
 
 interface ArmTotals {
   sessions: number;
@@ -45,20 +45,34 @@ export async function getRunningExperimentSummary(
   const [sessionRows, conversionRows] = await Promise.all([
     db
       .select({
-        arm: sessions.experimentArm,
-        total: count(),
+        arm: sql<ExperimentArm>`${events.payload}->>'variantArm'`,
+        total: countDistinct(events.sessionId),
       })
-      .from(sessions)
-      .where(eq(sessions.experimentId, experiment.id))
-      .groupBy(sessions.experimentArm),
+      .from(events)
+      .where(
+        and(
+          eq(events.pageId, pageId),
+          eq(events.eventType, "page_view"),
+          sql`${events.payload}->>'experimentId' = ${experiment.id}`,
+          sql`${events.payload}->>'variantArm' in ('control', 'variant')`,
+        ),
+      )
+      .groupBy(sql`${events.payload}->>'variantArm'`),
     db
       .select({
-        arm: conversions.arm,
-        total: countDistinct(conversions.sessionId),
+        arm: sql<ExperimentArm>`${events.payload}->>'variantArm'`,
+        total: countDistinct(events.sessionId),
       })
-      .from(conversions)
-      .where(eq(conversions.experimentId, experiment.id))
-      .groupBy(conversions.arm),
+      .from(events)
+      .where(
+        and(
+          eq(events.pageId, pageId),
+          eq(events.eventType, "form_submit"),
+          sql`${events.payload}->>'experimentId' = ${experiment.id}`,
+          sql`${events.payload}->>'variantArm' in ('control', 'variant')`,
+        ),
+      )
+      .groupBy(sql`${events.payload}->>'variantArm'`),
   ]);
 
   const arms = emptyArmTotals();

@@ -4,7 +4,7 @@ import {
   toExperimentErrorResponse,
 } from "@/features/experiments/lib/experiment-errors";
 import { createExperiment } from "@/features/experiments/server/create-experiment";
-import { getRunningExperimentForPage } from "@/features/experiments/server/get-running-experiment";
+import { getRunningExperimentSummary } from "@/features/experiments/server/get-running-experiment-summary";
 import { parseJsonBody } from "@/lib/validations/parse-json-body";
 
 export const runtime = "nodejs";
@@ -26,7 +26,7 @@ export async function GET(request: Request): Promise<Response> {
     );
   }
 
-  const experiment = await getRunningExperimentForPage(parsed.data.pageId);
+  const experiment = await getRunningExperimentSummary(parsed.data.pageId);
 
   return Response.json({ experiment });
 }

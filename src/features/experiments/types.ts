@@ -5,6 +5,8 @@ export interface ExperimentAssignment {
   variantArm: ExperimentArm;
 }
 
+export type ExperimentWinnerRecommendation = ExperimentArm | "inconclusive";
+
 export type ExperimentStatus =
   | "draft"
   | "running"

@@ -1,3 +1,10 @@
+export type ExperimentArm = "control" | "variant";
+
+export interface ExperimentAssignment {
+  experimentId: string;
+  variantArm: ExperimentArm;
+}
+
 export type ExperimentStatus =
   | "draft"
   | "running"

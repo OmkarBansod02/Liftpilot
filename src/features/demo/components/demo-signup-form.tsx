@@ -7,7 +7,11 @@ import { Input } from "@/components/ui/input";
 import { demoContent } from "@/features/demo/lib/demo-content";
 import { CheckCircle2 } from "lucide-react";
 
-export function DemoSignupForm() {
+interface DemoSignupFormProps {
+  ctaLabel: string;
+}
+
+export function DemoSignupForm({ ctaLabel }: DemoSignupFormProps) {
   const { track } = useTracker();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -58,7 +62,7 @@ export function DemoSignupForm() {
               required
               className="flex-1"
             />
-            <Button type="submit">{demoContent.ctaLabel}</Button>
+            <Button type="submit">{ctaLabel}</Button>
           </form>
         )}
       </div>

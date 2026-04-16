@@ -2,11 +2,13 @@ export const dynamic = "force-dynamic";
 
 import Link from "next/link";
 import { ensureDemoPage } from "@/features/demo/server/ensure-demo-page";
+import { getDemoExperimentRuntime } from "@/features/demo/server/get-demo-experiment-runtime";
 import { DemoPageClient } from "@/features/demo/components/demo-page-client";
 import { demoContent } from "@/features/demo/lib/demo-content";
 
 export default async function DemoPage() {
   const { pageId } = await ensureDemoPage();
+  const experimentRuntime = await getDemoExperimentRuntime(pageId);
 
   return (
     <div className="flex min-h-full flex-col">
@@ -24,7 +26,10 @@ export default async function DemoPage() {
       </header>
 
       <main className="flex-1">
-        <DemoPageClient pageId={pageId} />
+        <DemoPageClient
+          pageId={pageId}
+          experimentRuntime={experimentRuntime}
+        />
       </main>
 
       <footer className="border-t">

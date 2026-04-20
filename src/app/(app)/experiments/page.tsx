@@ -20,8 +20,8 @@ const FLOW_STEPS = [
   "System diagnoses a friction point",
   "One improved variant is generated",
   "You review and approve the change",
-  "Traffic is split 50/50 for testing",
-  "Results are calculated and the winner can be deployed",
+  "Traffic is split 50/50 between control and variant",
+  "Results are compared and the recommended winner can be deployed",
 ] as const;
 
 export default async function ExperimentsPage() {
@@ -50,10 +50,11 @@ export default async function ExperimentsPage() {
                 <div className="flex size-12 items-center justify-center rounded-xl bg-muted">
                   <FlaskConical className="size-6 text-muted-foreground" />
                 </div>
-                <h3 className="mt-4 font-semibold">No experiments yet</h3>
+                <h3 className="mt-4 font-semibold">No active experiment</h3>
                 <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-                  Experiments are created after the system diagnoses a friction
-                  point and generates an improved variant for your approval.
+                  An experiment appears here after the system diagnoses a
+                  friction point, generates an improved variant, and you
+                  approve it from the dashboard.
                 </p>
                 <Button variant="outline" size="sm" className="mt-6" disabled>
                   Create experiment

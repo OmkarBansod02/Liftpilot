@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,12 @@ import type { ExperimentWinnerRecommendation } from "@/features/experiments/lib/
 interface DeployWinnerButtonProps {
   experimentId: string;
   recommendedWinner: ExperimentWinnerRecommendation;
+}
+
+function getDeployLabel(winner: ExperimentWinnerRecommendation): string {
+  if (winner === "variant") return "Deploy variant as baseline";
+  if (winner === "control") return "Keep control as baseline";
+  return "Deploy winner";
 }
 
 export function DeployWinnerButton({
@@ -45,21 +52,25 @@ export function DeployWinnerButton({
   }
 
   return (
-    <div className="flex flex-col items-start gap-2">
+    <div className="flex flex-col items-stretch gap-2 sm:items-end">
       <Button
         type="button"
         size="sm"
+        className="gap-2"
         disabled={!canDeploy || isDeploying}
         onClick={handleDeploy}
       >
-        {isDeploying ? "Deploying..." : "Deploy winner"}
+        {isDeploying ? "Deploying…" : getDeployLabel(recommendedWinner)}
+        {canDeploy && !isDeploying && <ArrowRight className="size-3.5" />}
       </Button>
       {!canDeploy && (
-        <p className="text-xs text-muted-foreground">
-          Deployment is disabled until the result has a clear winner.
+        <p className="max-w-xs text-xs text-muted-foreground sm:text-right">
+          Keep the test running to collect more data before picking a winner.
         </p>
       )}
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      {error && (
+        <p className="text-xs text-destructive sm:text-right">{error}</p>
+      )}
     </div>
   );
 }

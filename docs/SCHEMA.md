@@ -234,3 +234,12 @@ transition. The backend:
 Phase 6 intentionally does not include confidence intervals, Bayesian testing,
 automatic deployment, rollback history, CMS integrations, multiple active
 experiments, or a generalized experimentation framework.
+
+## Local Demo Reset
+
+`npm run db:reset-demo` resets local demo state without dropping tables or
+touching migrations. It refuses to run when `NODE_ENV=production`.
+
+The command preserves or recreates the demo `sites` and `pages` rows, restores
+the demo page `baseline_content` to the default baseline, and deletes demo page
+rows from `conversions`, `events`, `sessions`, `experiments`, and `variants`.

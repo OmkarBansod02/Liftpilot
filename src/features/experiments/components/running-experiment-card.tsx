@@ -165,13 +165,19 @@ export function RunningExperimentCard({
           <div
             className={cn(
               "rounded-xl border p-4 transition-colors",
-              controlHighlighted && "border-foreground/40 bg-muted/30",
+              controlHighlighted &&
+                "border-accent-foreground/30 bg-accent/30 ring-1 ring-accent-foreground/15",
             )}
           >
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold">Control</h3>
               {controlHighlighted ? (
-                <Badge variant="secondary">Recommended</Badge>
+                <Badge
+                  variant="secondary"
+                  className="bg-accent text-accent-foreground"
+                >
+                  Recommended
+                </Badge>
               ) : (
                 <Badge variant="outline">Baseline</Badge>
               )}
@@ -188,13 +194,19 @@ export function RunningExperimentCard({
           <div
             className={cn(
               "rounded-xl border p-4 transition-colors",
-              variantHighlighted && "border-foreground/40 bg-muted/30",
+              variantHighlighted &&
+                "border-accent-foreground/30 bg-accent/30 ring-1 ring-accent-foreground/15",
             )}
           >
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold">Variant</h3>
               {variantHighlighted ? (
-                <Badge variant="secondary">Recommended</Badge>
+                <Badge
+                  variant="secondary"
+                  className="bg-accent text-accent-foreground"
+                >
+                  Recommended
+                </Badge>
               ) : (
                 <Badge variant="outline">Challenger</Badge>
               )}

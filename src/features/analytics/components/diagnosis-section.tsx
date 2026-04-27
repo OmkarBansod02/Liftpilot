@@ -10,14 +10,30 @@ interface DiagnosisSectionProps {
 
 export function DiagnosisSection({ diagnosis }: DiagnosisSectionProps) {
   if (diagnosis.status === "not_enough_data") {
-    return <DiagnosisEmptyState diagnosis={diagnosis} />;
+    return (
+      <section className="space-y-3">
+        <SectionLabel>Diagnosis</SectionLabel>
+        <DiagnosisEmptyState diagnosis={diagnosis} />
+      </section>
+    );
   }
 
   return (
-    <div className="space-y-4">
-      <BottleneckCard diagnosis={diagnosis} />
-      <SupportingSignals signals={diagnosis.supportingSignals} />
-      <RecommendedExperimentCard experiment={diagnosis.recommendedExperiment} />
-    </div>
+    <section className="space-y-5">
+      <SectionLabel>Diagnosis</SectionLabel>
+      <div className="space-y-4">
+        <BottleneckCard diagnosis={diagnosis} />
+        <SupportingSignals signals={diagnosis.supportingSignals} />
+        <RecommendedExperimentCard experiment={diagnosis.recommendedExperiment} />
+      </div>
+    </section>
+  );
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+      {children}
+    </h2>
   );
 }

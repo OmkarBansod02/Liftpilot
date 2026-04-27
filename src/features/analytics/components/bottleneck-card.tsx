@@ -1,8 +1,10 @@
-import { AlertTriangle, CheckCircle, HelpCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, HelpCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import type {
   DashboardDiagnosis,
   DiagnosisConfidence,
+  PrimaryBottleneck,
 } from "@/features/analytics/types";
 
 interface BottleneckCardProps {
@@ -18,25 +20,42 @@ const confidenceConfig: Record<
   low: { label: "Low confidence", variant: "outline" },
 };
 
-function BottleneckIcon({ bottleneck }: { bottleneck: string }) {
-  if (bottleneck === "healthy_funnel") {
-    return <CheckCircle className="size-5 text-foreground/70" />;
-  }
-  if (bottleneck === "insufficient_data") {
-    return <HelpCircle className="size-5 text-muted-foreground" />;
-  }
-  return <AlertTriangle className="size-5 text-foreground/70" />;
+type Severity = "issue" | "healthy" | "neutral";
+
+function getSeverity(bottleneck: PrimaryBottleneck): Severity {
+  if (bottleneck === "healthy_funnel") return "healthy";
+  if (bottleneck === "insufficient_data") return "neutral";
+  return "issue";
 }
+
+function SeverityIcon({ severity }: { severity: Severity }) {
+  if (severity === "healthy") {
+    return <CheckCircle2 className="size-5" />;
+  }
+  if (severity === "neutral") {
+    return <HelpCircle className="size-5" />;
+  }
+  return <AlertTriangle className="size-5" />;
+}
+
+const severityIconStyles: Record<Severity, string> = {
+  issue: "bg-warning/15 text-warning",
+  healthy: "bg-success/15 text-success",
+  neutral: "bg-muted text-muted-foreground",
+};
 
 export function BottleneckCard({ diagnosis }: BottleneckCardProps) {
   const conf = confidenceConfig[diagnosis.confidence];
+  const severity = getSeverity(diagnosis.primaryBottleneck);
 
   return (
-    <div className="rounded-xl border bg-card p-6 ring-1 ring-foreground/10">
+    <Card className="gap-0 p-6">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
-          <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted">
-            <BottleneckIcon bottleneck={diagnosis.primaryBottleneck} />
+          <div
+            className={`mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg ${severityIconStyles[severity]}`}
+          >
+            <SeverityIcon severity={severity} />
           </div>
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -54,6 +73,6 @@ export function BottleneckCard({ diagnosis }: BottleneckCardProps) {
       <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">
         {diagnosis.summary}
       </p>
-    </div>
+    </Card>
   );
 }

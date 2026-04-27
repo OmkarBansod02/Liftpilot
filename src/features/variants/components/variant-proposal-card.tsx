@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FileText, FlaskConical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { BaselineVsVariant } from "@/features/variants/components/baseline-vs-variant";
 import type { DemoPageBaseline, SerializedVariantProposal } from "@/features/variants/types";
 
@@ -25,7 +26,11 @@ function formatTargetArea(area: string): string {
 
 function StatusBadge({ status }: { status: string }) {
   if (status === "pending_approval") {
-    return <Badge variant="secondary">Pending Approval</Badge>;
+    return (
+      <Badge variant="secondary" className="bg-accent text-accent-foreground">
+        Pending approval
+      </Badge>
+    );
   }
   return <Badge variant="outline">{status}</Badge>;
 }
@@ -82,11 +87,11 @@ export function VariantProposalCard({
 
   return (
     <div className="space-y-5">
-      <div className="rounded-xl border bg-card p-6 ring-1 ring-foreground/10">
+      <Card className="gap-0 p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted">
-              <FileText className="size-5 text-foreground/70" />
+            <div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+              <FileText className="size-5" />
             </div>
             <div>
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -100,43 +105,38 @@ export function VariantProposalCard({
           <StatusBadge status={variant.status} />
         </div>
 
-        <div className="mt-5 grid gap-4 sm:grid-cols-3">
-          <div>
-            <p className="text-xs font-medium text-muted-foreground">Target Area</p>
-            <p className="mt-0.5 text-sm font-medium">
-              {formatTargetArea(variant.targetArea)}
-            </p>
-          </div>
-          <div>
-            <p className="text-xs font-medium text-muted-foreground">Expected Impact</p>
-            <p className="mt-0.5 text-sm font-medium">
-              {variant.expectedImpact}
-            </p>
-          </div>
-          <div>
-            <p className="text-xs font-medium text-muted-foreground">Source</p>
-            <p className="mt-0.5 text-sm font-medium">
-              {variant.source === "ai" ? "AI-generated" : "Deterministic fallback"}
-            </p>
-          </div>
+        <div className="mt-5 grid gap-4 rounded-lg border bg-muted/40 p-4 sm:grid-cols-3">
+          <MetaCell label="Target area" value={formatTargetArea(variant.targetArea)} />
+          <MetaCell label="Expected impact" value={variant.expectedImpact} />
+          <MetaCell
+            label="Source"
+            value={variant.source === "ai" ? "AI-generated" : "Deterministic fallback"}
+          />
         </div>
 
         <div className="mt-5">
-          <p className="text-xs font-medium text-muted-foreground">Rationale</p>
-          <p className="mt-1 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            Rationale
+          </p>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
             {variant.rationale}
           </p>
         </div>
-      </div>
+      </Card>
 
       <BaselineVsVariant baseline={baseline} variant={variant} />
 
-      <div className="flex items-center justify-between rounded-xl border bg-card px-6 py-4 ring-1 ring-foreground/10">
+      <Card className="flex-row items-center justify-between gap-4 px-6 py-4">
         <div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-foreground">
             {isPending
-              ? "Approve this variant to begin an A/B test against your baseline."
+              ? "Ready to test?"
               : "This variant is approved and now has a running A/B test."}
+          </p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {isPending
+              ? "Approve the proposal to launch a 50/50 A/B test against your baseline."
+              : "Open the experiment to monitor live performance."}
           </p>
           {errorMessage && (
             <p className="mt-1 text-xs font-medium text-destructive">
@@ -146,7 +146,6 @@ export function VariantProposalCard({
         </div>
         {isPending ? (
           <Button
-            variant="outline"
             size="sm"
             onClick={approveVariant}
             disabled={isApproving}
@@ -160,7 +159,16 @@ export function VariantProposalCard({
             <a href="/experiments">View experiment</a>
           </Button>
         )}
-      </div>
+      </Card>
+    </div>
+  );
+}
+
+function MetaCell({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-xs font-medium text-muted-foreground">{label}</p>
+      <p className="mt-1 text-sm font-medium text-foreground">{value}</p>
     </div>
   );
 }

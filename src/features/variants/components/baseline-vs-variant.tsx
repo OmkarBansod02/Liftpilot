@@ -1,4 +1,5 @@
-import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import type { DemoPageBaseline, SerializedVariantProposal } from "@/features/variants/types";
 
 interface BaselineVsVariantProps {
@@ -16,16 +17,25 @@ function ComparisonRow({ label, baselineValue, variantValue }: ComparisonRowProp
   const changed = baselineValue !== variantValue;
 
   return (
-    <div className="grid grid-cols-[120px_1fr_1fr] gap-3 py-3 text-sm">
-      <span className="font-medium text-muted-foreground">{label}</span>
-      <span className="leading-relaxed">{baselineValue}</span>
-      <span className={changed ? "font-medium leading-relaxed" : "leading-relaxed text-muted-foreground"}>
-        {variantValue}
-        {changed && (
-          <Badge variant="outline" className="ml-2 text-[10px]">
-            changed
-          </Badge>
+    <div
+      className={cn(
+        "grid grid-cols-[140px_1fr_1fr] items-start gap-3 px-5 py-4 text-sm",
+        changed && "bg-accent/20",
+      )}
+    >
+      <span className="pt-px text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        {label}
+      </span>
+      <span className="leading-relaxed text-muted-foreground">
+        {baselineValue}
+      </span>
+      <span
+        className={cn(
+          "leading-relaxed",
+          changed ? "font-medium text-foreground" : "text-muted-foreground",
         )}
+      >
+        {variantValue}
       </span>
     </div>
   );
@@ -33,14 +43,14 @@ function ComparisonRow({ label, baselineValue, variantValue }: ComparisonRowProp
 
 export function BaselineVsVariant({ baseline, variant }: BaselineVsVariantProps) {
   return (
-    <div className="rounded-lg border">
-      <div className="grid grid-cols-[120px_1fr_1fr] gap-3 border-b bg-muted/50 px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+    <Card className="gap-0 p-0">
+      <div className="grid grid-cols-[140px_1fr_1fr] gap-3 border-b px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         <span>Element</span>
         <span>Baseline</span>
-        <span>Proposed Variant</span>
+        <span className="text-accent-foreground">Proposed Variant</span>
       </div>
 
-      <div className="divide-y px-4">
+      <div className="divide-y">
         <ComparisonRow
           label="Headline"
           baselineValue={baseline.headline}
@@ -62,6 +72,6 @@ export function BaselineVsVariant({ baseline, variant }: BaselineVsVariantProps)
           variantValue={variant.trustProofRow.join(" · ")}
         />
       </div>
-    </div>
+    </Card>
   );
 }

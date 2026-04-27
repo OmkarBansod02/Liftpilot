@@ -7,6 +7,7 @@ import {
   FormInput,
   Send,
 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { PageContainer } from "@/components/layout/page-container";
 import { PageHeader } from "@/components/layout/page-header";
 import { MetricCard } from "@/features/analytics/components/metric-card";
@@ -33,6 +34,34 @@ function formatDepth(value: number): string {
   return `${Math.round(value)}%`;
 }
 
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+      {children}
+    </h2>
+  );
+}
+
+interface SecondaryStatCardProps {
+  title: string;
+  value: string;
+  description: string;
+}
+
+function SecondaryStatCard({ title, value, description }: SecondaryStatCardProps) {
+  return (
+    <Card className="gap-2 px-5 py-4">
+      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        {title}
+      </p>
+      <p className="text-2xl font-semibold tabular-nums leading-none">{value}</p>
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        {description}
+      </p>
+    </Card>
+  );
+}
+
 export default async function DashboardPage() {
   const { pageId } = await ensureDemoPage();
   const [metrics, runningExperiment, baseline] = await Promise.all([
@@ -54,7 +83,7 @@ export default async function DashboardPage() {
     <PageContainer>
       <PageHeader
         title="Dashboard"
-        description="Monitor visitor behavior and track conversion performance."
+        description="Monitor visitor behavior, diagnose friction, and ship the next experiment."
       />
 
       {!hasData ? (
@@ -62,94 +91,88 @@ export default async function DashboardPage() {
           <DashboardEmpty />
         </div>
       ) : (
-        <>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            <MetricCard
-              title="Sessions"
-              value={metrics.totalSessions.toLocaleString()}
-              description="Total tracked sessions"
-              icon={Activity}
-            />
-            <MetricCard
-              title="Page Views"
-              value={metrics.totalPageViews.toLocaleString()}
-              description="Total page view events"
-              icon={Eye}
-            />
-            <MetricCard
-              title="CTA Clicks"
-              value={metrics.ctaClicks.toLocaleString()}
-              description={`${formatPercent(metrics.ctaClickThroughRate)} of sessions clicked`}
-              icon={MousePointerClick}
-            />
-            <MetricCard
-              title="Form Starts"
-              value={metrics.formStarts.toLocaleString()}
-              description={`${formatPercent(metrics.formStartRate)} of sessions started`}
-              icon={FormInput}
-            />
-            <MetricCard
-              title="Form Submits"
-              value={metrics.formSubmits.toLocaleString()}
-              description={`${formatPercent(metrics.formSubmitRate)} of sessions submitted`}
-              icon={Send}
-            />
-          </div>
-
-          <div className="mt-8">
-            <DiagnosisSection diagnosis={metrics.diagnosis} />
-          </div>
-
-          {runningExperiment && (
-            <div className="mt-8">
-              <RunningExperimentCard experiment={runningExperiment} />
-            </div>
-          )}
-
-          {diagnosisReady && !runningExperiment && (
-            <div className="mt-8">
-              <VariantSection
-                pageId={pageId}
-                baseline={baseline}
-                initialVariant={serializedVariant}
+        <div className="mt-8 space-y-10">
+          <section className="space-y-3">
+            <SectionLabel>Performance</SectionLabel>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+              <MetricCard
+                title="Sessions"
+                value={metrics.totalSessions.toLocaleString()}
+                description="Total tracked sessions"
+                icon={Activity}
+                emphasis="primary"
+              />
+              <MetricCard
+                title="Page Views"
+                value={metrics.totalPageViews.toLocaleString()}
+                description="Total page view events"
+                icon={Eye}
+              />
+              <MetricCard
+                title="CTA Clicks"
+                value={metrics.ctaClicks.toLocaleString()}
+                description={`${formatPercent(metrics.ctaClickThroughRate)} of sessions clicked`}
+                icon={MousePointerClick}
+              />
+              <MetricCard
+                title="Form Starts"
+                value={metrics.formStarts.toLocaleString()}
+                description={`${formatPercent(metrics.formStartRate)} of sessions started`}
+                icon={FormInput}
+              />
+              <MetricCard
+                title="Form Submits"
+                value={metrics.formSubmits.toLocaleString()}
+                description={`${formatPercent(metrics.formSubmitRate)} of sessions submitted`}
+                icon={Send}
               />
             </div>
+          </section>
+
+          <DiagnosisSection diagnosis={metrics.diagnosis} />
+
+          {(runningExperiment ||
+            (diagnosisReady && !runningExperiment)) && (
+            <section className="space-y-3">
+              <SectionLabel>
+                {runningExperiment ? "Live experiment" : "Next experiment"}
+              </SectionLabel>
+              {runningExperiment ? (
+                <RunningExperimentCard experiment={runningExperiment} />
+              ) : (
+                <VariantSection
+                  pageId={pageId}
+                  baseline={baseline}
+                  initialVariant={serializedVariant}
+                />
+              )}
+            </section>
           )}
 
-          <div className="mt-8 grid gap-6 lg:grid-cols-2">
-            <ConversionFunnel metrics={metrics} />
-
-            <div className="flex flex-col gap-4">
-              <div className="rounded-xl border border-border bg-card p-6 shadow-[0_1px_2px_rgba(23,23,23,0.04)]">
-                <h3 className="text-sm font-semibold">CTA Click-Through</h3>
-                <p className="mt-2 text-3xl font-bold tabular-nums">
-                  {formatPercent(metrics.ctaClickThroughRate)}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Sessions with a CTA click / total sessions
-                </p>
-              </div>
-              <div className="rounded-xl border border-border bg-card p-6 shadow-[0_1px_2px_rgba(23,23,23,0.04)]">
-                <h3 className="text-sm font-semibold">Average Max Scroll</h3>
-                <p className="mt-2 text-3xl font-bold tabular-nums">
-                  {formatDepth(metrics.scrollDepth.averageMaxScrollDepth)}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Deepest scroll milestone averaged across sessions
-                </p>
-              </div>
-              <div className="rounded-xl border border-border bg-card p-6 shadow-[0_1px_2px_rgba(23,23,23,0.04)]">
-                <h3 className="text-sm font-semibold">Form Submit Rate</h3>
-                <p className="mt-2 text-3xl font-bold tabular-nums">
-                  {formatPercent(metrics.formSubmitRate)}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Sessions with a form submit / total sessions
-                </p>
+          <section className="space-y-3">
+            <SectionLabel>Funnel breakdown</SectionLabel>
+            <div className="grid gap-4 lg:grid-cols-2">
+              <ConversionFunnel metrics={metrics} />
+              <div className="grid gap-3">
+                <SecondaryStatCard
+                  title="CTA Click-Through"
+                  value={formatPercent(metrics.ctaClickThroughRate)}
+                  description="Sessions with a CTA click / total sessions"
+                />
+                <SecondaryStatCard
+                  title="Average Max Scroll"
+                  value={formatDepth(metrics.scrollDepth.averageMaxScrollDepth)}
+                  description="Deepest scroll milestone averaged across sessions"
+                />
+                <SecondaryStatCard
+                  title="Form Submit Rate"
+                  value={formatPercent(metrics.formSubmitRate)}
+                  description="Sessions with a form submit / total sessions"
+                />
               </div>
             </div>
-          </div>
-        </>
+          </section>
+        </div>
       )}
     </PageContainer>
   );

@@ -6,7 +6,10 @@ import type {
   DemoPageBaseline,
 } from "@/features/demo/types";
 import { assignExperimentArm } from "@/features/experiments/lib/assign-experiment-arm";
-import type { ExperimentAssignment } from "@/features/experiments/types";
+import type {
+  ExperimentArm,
+  ExperimentAssignment,
+} from "@/features/experiments/types";
 import { getOrCreateAnonymousId } from "@/features/snippet/client/anonymous-id";
 import { TrackerProvider } from "@/features/snippet/client/tracker-provider";
 import { usePageView } from "@/features/snippet/client/use-page-view";
@@ -36,6 +39,18 @@ function readAssignmentCookie(experimentId: string): ExperimentAssignment | null
 function writeAssignmentCookie(assignment: ExperimentAssignment): void {
   const maxAge = 60 * 60 * 24 * 30;
   document.cookie = `${getAssignmentCookieName(assignment.experimentId)}=${assignment.variantArm}; Max-Age=${maxAge}; Path=/; SameSite=Lax`;
+}
+
+function getForcedAssignment(
+  experimentRuntime: DemoExperimentRuntime | null,
+  forcedArm: ExperimentArm | null,
+): ExperimentAssignment | null {
+  if (!experimentRuntime || !forcedArm) return null;
+
+  return {
+    experimentId: experimentRuntime.experimentId,
+    variantArm: forcedArm,
+  };
 }
 
 function resolveAssignment(
@@ -106,26 +121,34 @@ interface DemoPageClientProps {
   pageId: string;
   baseline: DemoPageBaseline;
   experimentRuntime: DemoExperimentRuntime | null;
+  forcedArm: ExperimentArm | null;
 }
 
 export function DemoPageClient({
   pageId,
   baseline,
   experimentRuntime,
+  forcedArm,
 }: DemoPageClientProps) {
-  const [assignment, setAssignment] = useState<ExperimentAssignment | null>(
-    null,
-  );
+  const forcedAssignment = getForcedAssignment(experimentRuntime, forcedArm);
+  const [resolvedAssignment, setResolvedAssignment] =
+    useState<ExperimentAssignment | null>(null);
 
   useEffect(() => {
-    if (!experimentRuntime) return;
+    if (!experimentRuntime || forcedAssignment) return;
 
     const timerId = window.setTimeout(() => {
-      setAssignment(resolveAssignment(experimentRuntime));
+      setResolvedAssignment(resolveAssignment(experimentRuntime));
     }, 0);
 
     return () => window.clearTimeout(timerId);
-  }, [experimentRuntime]);
+  }, [experimentRuntime, forcedAssignment]);
+
+  const assignment =
+    forcedAssignment ??
+    (resolvedAssignment?.experimentId === experimentRuntime?.experimentId
+      ? resolvedAssignment
+      : null);
 
   const heroContent = useMemo(
     () => buildHeroContent(baseline, experimentRuntime, assignment),
@@ -133,6 +156,12 @@ export function DemoPageClient({
   );
 
   const experimentContext = experimentRuntime ? assignment : null;
+  const isForcedAssignment = Boolean(
+    experimentRuntime &&
+      forcedArm &&
+      assignment?.experimentId === experimentRuntime.experimentId &&
+      assignment.variantArm === forcedArm,
+  );
 
   if (experimentRuntime && !assignment) {
     return (
@@ -148,7 +177,9 @@ export function DemoPageClient({
       experimentContext={experimentContext}
     >
       <TrackedContent heroContent={heroContent} />
-      {assignment && <DevArmBadge arm={assignment.variantArm} />}
+      {experimentRuntime && assignment && (
+        <DevArmBadge arm={assignment.variantArm} forced={isForcedAssignment} />
+      )}
     </TrackerProvider>
   );
 }

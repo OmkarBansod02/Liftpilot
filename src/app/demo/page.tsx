@@ -5,8 +5,30 @@ import { ensureDemoPage } from "@/features/demo/server/ensure-demo-page";
 import { getDemoPageBaseline } from "@/features/demo/server/get-demo-page-baseline";
 import { getDemoExperimentRuntime } from "@/features/demo/server/get-demo-experiment-runtime";
 import { DemoPageClient } from "@/features/demo/components/demo-page-client";
+import type { ExperimentArm } from "@/features/experiments/types";
 
-export default async function DemoPage() {
+interface DemoPageProps {
+  searchParams?: Promise<{
+    arm?: string | string[] | undefined;
+  }>;
+}
+
+function parseForcedArm(
+  value: string | string[] | undefined,
+): ExperimentArm | null {
+  const rawArm = Array.isArray(value) ? value[0] : value;
+
+  if (rawArm !== "control" && rawArm !== "variant") return null;
+
+  return rawArm;
+}
+
+export default async function DemoPage({ searchParams }: DemoPageProps) {
+  const params = searchParams ? await searchParams : undefined;
+  const forcedArm =
+    process.env.NODE_ENV === "development"
+      ? parseForcedArm(params?.arm)
+      : null;
   const { pageId } = await ensureDemoPage();
   const [baseline, experimentRuntime] = await Promise.all([
     getDemoPageBaseline(pageId),
@@ -33,6 +55,7 @@ export default async function DemoPage() {
           pageId={pageId}
           baseline={baseline}
           experimentRuntime={experimentRuntime}
+          forcedArm={forcedArm}
         />
       </main>
 

@@ -1,41 +1,73 @@
+import { CheckCircle2, RotateCcw } from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+
 import type { AuditResult } from "../types";
 import { AuditScreenshot } from "./audit-screenshot";
 import { AuditSummaryCard } from "./audit-summary-card";
+import { ExperimentCard } from "./experiment-card";
 import { FindingsGrid } from "./findings-grid";
 import { IssueList } from "./issue-list";
-import { ExperimentCard } from "./experiment-card";
 import { NextStepsPanel } from "./next-steps-panel";
 
 interface AuditResultsProps {
   result: AuditResult;
+  onAuditAnother?: () => void;
 }
 
-export function AuditResults({ result }: AuditResultsProps) {
+export function AuditResults({ result, onAuditAnother }: AuditResultsProps) {
   return (
-    <div className="space-y-8">
-      {/* Top row: screenshot + summary */}
-      <div className="grid gap-4 lg:grid-cols-5">
-        <div className="lg:col-span-2">
-          <AuditScreenshot
-            screenshotUrl={result.screenshotUrl}
-            url={result.url}
-          />
+    <div className="space-y-10">
+      {/* Verdict — top hero row */}
+      <section className="space-y-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div className="space-y-1">
+            <Badge
+              variant="secondary"
+              className="h-6 gap-1 rounded-full border border-success/20 bg-success/10 px-2.5 text-[11px] font-medium text-success"
+            >
+              <CheckCircle2 className="size-3" />
+              Audit complete
+            </Badge>
+            <h2 className="font-heading text-xl font-semibold tracking-tight">
+              Verdict
+            </h2>
+            <p className="text-[13px] text-muted-foreground">
+              {result.findings.length}{" "}
+              {result.findings.length === 1 ? "finding" : "findings"} ·{" "}
+              {result.issues.length}{" "}
+              {result.issues.length === 1 ? "prioritized issue" : "prioritized issues"}{" "}
+              · 1 recommended experiment
+            </p>
+          </div>
+          {onAuditAnother && (
+            <Button variant="outline" size="sm" onClick={onAuditAnother}>
+              <RotateCcw className="size-3.5" />
+              Audit another URL
+            </Button>
+          )}
         </div>
-        <div className="lg:col-span-3">
-          <AuditSummaryCard result={result} />
-        </div>
-      </div>
 
-      {/* Key findings */}
+        <div className="grid gap-4 lg:grid-cols-5">
+          <div className="lg:col-span-3">
+            <AuditScreenshot
+              screenshotUrl={result.screenshotUrl}
+              url={result.url}
+            />
+          </div>
+          <div className="lg:col-span-2">
+            <AuditSummaryCard result={result} />
+          </div>
+        </div>
+      </section>
+
+      {/* Evidence */}
       <FindingsGrid findings={result.findings} />
-
-      {/* Prioritized issues with impact */}
       <IssueList issues={result.issues} />
 
-      {/* Recommended experiment */}
+      {/* Plan */}
       <ExperimentCard experiment={result.recommendedExperiment} />
-
-      {/* Next steps CTA */}
       <NextStepsPanel />
     </div>
   );

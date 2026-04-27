@@ -15,19 +15,21 @@ export function AuditError({ message, onRetry }: AuditErrorProps) {
           <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-destructive/10">
             <AlertCircle className="size-6 text-destructive" />
           </div>
-          <h3 className="mt-4 text-base font-semibold">Audit failed</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <h3 className="mt-4 text-base font-semibold tracking-tight">
+            Audit didn&apos;t complete
+          </h3>
+          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
             {message ??
               "We couldn't complete the audit. The page may be unreachable, or the URL may be invalid."}
           </p>
           <Button
             variant="outline"
             size="sm"
-            className="mt-4"
+            className="mt-5"
             onClick={onRetry}
           >
             <RotateCcw className="size-3.5" />
-            Try again
+            Try another URL
           </Button>
         </div>
       </CardContent>

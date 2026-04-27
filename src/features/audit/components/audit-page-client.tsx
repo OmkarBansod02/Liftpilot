@@ -64,10 +64,13 @@ export function AuditPageClient() {
     }
   }
 
-  function handleRetry() {
+  function handleReset() {
     setStatus("idle");
     setResult(null);
     setErrorMessage(null);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   }
 
   return (
@@ -79,11 +82,13 @@ export function AuditPageClient() {
       />
 
       {status === "idle" && <AuditEmpty />}
-      {status === "loading" && <AuditLoading />}
+      {status === "loading" && <AuditLoading url={submittedUrl} />}
       {status === "error" && (
-        <AuditError message={errorMessage ?? undefined} onRetry={handleRetry} />
+        <AuditError message={errorMessage ?? undefined} onRetry={handleReset} />
       )}
-      {status === "success" && result && <AuditResults result={result} />}
+      {status === "success" && result && (
+        <AuditResults result={result} onAuditAnother={handleReset} />
+      )}
     </div>
   );
 }

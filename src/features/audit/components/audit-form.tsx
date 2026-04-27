@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Loader2 } from "lucide-react";
+import { ArrowRight, Globe, Loader2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createAuditInputSchema } from "../schemas/audit-input";
@@ -34,33 +34,52 @@ export function AuditForm({ onSubmit, isLoading, defaultUrl }: AuditFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-2">
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <Input
-            type="text"
-            placeholder="https://example.com"
-            value={url}
-            onChange={(e) => {
-              setUrl(e.target.value);
-              if (error) setError(null);
-            }}
-            disabled={isLoading}
-            aria-invalid={!!error}
-            className="h-10 pr-3 pl-3 text-sm"
-          />
-        </div>
-        <Button type="submit" size="lg" disabled={isLoading || !url.trim()}>
+      <div
+        className="flex items-center gap-2 rounded-2xl border border-border bg-card p-1.5 pl-3 shadow-[0_1px_2px_rgba(23,23,23,0.04),0_8px_24px_-16px_rgba(23,23,23,0.12)] focus-within:border-primary/40 focus-within:ring-3 focus-within:ring-ring/20 has-aria-invalid:border-destructive/40 has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20"
+      >
+        <Globe className="size-4 shrink-0 text-muted-foreground" />
+        <Input
+          type="text"
+          placeholder="https://yourlanding.com"
+          value={url}
+          onChange={(e) => {
+            setUrl(e.target.value);
+            if (error) setError(null);
+          }}
+          disabled={isLoading}
+          aria-invalid={!!error}
+          className="h-10 flex-1 border-0 bg-transparent px-1 text-[15px] shadow-none focus-visible:ring-0 focus-visible:border-transparent disabled:bg-transparent"
+        />
+        <Button
+          type="submit"
+          size="lg"
+          disabled={isLoading || !url.trim()}
+          className="h-10 px-4 text-[14px]"
+        >
           {isLoading ? (
-            <Loader2 className="size-4 animate-spin" />
+            <>
+              <Loader2 className="size-4 animate-spin" />
+              Auditing
+            </>
           ) : (
-            <Search className="size-4" />
+            <>
+              <Search className="size-4" />
+              Run Audit
+              <ArrowRight className="size-3.5" />
+            </>
           )}
-          {isLoading ? "Auditing…" : "Run Audit"}
         </Button>
       </div>
-      {error && (
-        <p className="text-sm text-destructive">{error}</p>
-      )}
+
+      <div className="flex min-h-[18px] items-center justify-between text-[12px]">
+        {error ? (
+          <p className="text-destructive">{error}</p>
+        ) : (
+          <p className="text-muted-foreground">
+            Public URLs only · Takes ~10–20 seconds
+          </p>
+        )}
+      </div>
     </form>
   );
 }

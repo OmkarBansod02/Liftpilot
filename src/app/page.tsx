@@ -16,7 +16,15 @@ export default function HomePage() {
   return (
     <div className="flex min-h-full flex-col">
       <header className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-6">
-        <span className="text-lg font-semibold tracking-tight">Liftpilot</span>
+        <Link href="/" className="flex items-center gap-2">
+          <span
+            aria-hidden
+            className="size-2 rounded-full bg-primary shadow-[0_0_0_3px_var(--accent)]"
+          />
+          <span className="text-[15px] font-semibold tracking-tight">
+            Liftpilot
+          </span>
+        </Link>
         <nav className="flex items-center gap-1">
           <Button variant="ghost" size="sm" asChild>
             <Link href="/audit">Audit</Link>
@@ -58,7 +66,7 @@ export default function HomePage() {
         </section>
 
         {/* Core Loop */}
-        <section className="border-t bg-muted/40">
+        <section className="border-y border-border bg-surface-muted">
           <div className="mx-auto max-w-6xl px-6 py-20">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-2xl font-semibold tracking-tight">
@@ -73,9 +81,9 @@ export default function HomePage() {
               {loopSteps.map((step) => (
                 <div
                   key={step.number}
-                  className="rounded-xl border bg-card p-5"
+                  className="rounded-xl border border-border bg-card p-5 shadow-[0_1px_2px_rgba(23,23,23,0.04)]"
                 >
-                  <div className="flex size-8 items-center justify-center rounded-md bg-primary text-xs font-semibold text-primary-foreground">
+                  <div className="flex size-8 items-center justify-center rounded-md bg-accent text-xs font-semibold text-accent-foreground">
                     {step.number}
                   </div>
                   <h3 className="mt-3 text-sm font-semibold">{step.label}</h3>
@@ -100,9 +108,9 @@ export default function HomePage() {
             </p>
           </div>
           <div className="mx-auto mt-10 grid max-w-4xl gap-6 sm:grid-cols-3">
-            <div className="rounded-xl border bg-card p-6">
-              <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
-                <Search className="size-5 text-muted-foreground" />
+            <div className="rounded-xl border border-border bg-card p-6 shadow-[0_1px_2px_rgba(23,23,23,0.04)]">
+              <div className="flex size-10 items-center justify-center rounded-lg bg-accent">
+                <Search className="size-5 text-accent-foreground" />
               </div>
               <h3 className="mt-4 font-semibold">URL Audit</h3>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -116,9 +124,9 @@ export default function HomePage() {
                 </Link>
               </Button>
             </div>
-            <div className="rounded-xl border bg-card p-6">
-              <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
-                <Eye className="size-5 text-muted-foreground" />
+            <div className="rounded-xl border border-border bg-card p-6 shadow-[0_1px_2px_rgba(23,23,23,0.04)]">
+              <div className="flex size-10 items-center justify-center rounded-lg bg-accent">
+                <Eye className="size-5 text-accent-foreground" />
               </div>
               <h3 className="mt-4 font-semibold">Demo Page</h3>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -132,9 +140,9 @@ export default function HomePage() {
                 </Link>
               </Button>
             </div>
-            <div className="rounded-xl border bg-card p-6">
-              <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
-                <FlaskConical className="size-5 text-muted-foreground" />
+            <div className="rounded-xl border border-border bg-card p-6 shadow-[0_1px_2px_rgba(23,23,23,0.04)]">
+              <div className="flex size-10 items-center justify-center rounded-lg bg-accent">
+                <FlaskConical className="size-5 text-accent-foreground" />
               </div>
               <h3 className="mt-4 font-semibold">Snippet Optimizer</h3>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -152,10 +160,10 @@ export default function HomePage() {
         </section>
       </main>
 
-      <footer className="border-t">
+      <footer className="border-t border-border">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6 text-sm text-muted-foreground">
           <span>Liftpilot</span>
-          <span>Phase 2 — Observe</span>
+          <span>Self-improving landing pages</span>
         </div>
       </footer>
     </div>

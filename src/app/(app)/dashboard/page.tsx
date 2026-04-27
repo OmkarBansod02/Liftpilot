@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { PageContainer } from "@/components/layout/page-container";
 import { PageHeader } from "@/components/layout/page-header";
-import { Badge } from "@/components/ui/badge";
 import { MetricCard } from "@/features/analytics/components/metric-card";
 import { ConversionFunnel } from "@/features/analytics/components/conversion-funnel";
 import { DashboardEmpty } from "@/features/analytics/components/dashboard-empty";
@@ -56,9 +55,7 @@ export default async function DashboardPage() {
       <PageHeader
         title="Dashboard"
         description="Monitor visitor behavior and track conversion performance."
-      >
-        <Badge variant="secondary">Phase 6</Badge>
-      </PageHeader>
+      />
 
       {!hasData ? (
         <div className="mt-8">
@@ -123,7 +120,7 @@ export default async function DashboardPage() {
             <ConversionFunnel metrics={metrics} />
 
             <div className="flex flex-col gap-4">
-              <div className="rounded-xl border bg-card p-6 ring-1 ring-foreground/10">
+              <div className="rounded-xl border border-border bg-card p-6 shadow-[0_1px_2px_rgba(23,23,23,0.04)]">
                 <h3 className="text-sm font-semibold">CTA Click-Through</h3>
                 <p className="mt-2 text-3xl font-bold tabular-nums">
                   {formatPercent(metrics.ctaClickThroughRate)}
@@ -132,7 +129,7 @@ export default async function DashboardPage() {
                   Sessions with a CTA click / total sessions
                 </p>
               </div>
-              <div className="rounded-xl border bg-card p-6 ring-1 ring-foreground/10">
+              <div className="rounded-xl border border-border bg-card p-6 shadow-[0_1px_2px_rgba(23,23,23,0.04)]">
                 <h3 className="text-sm font-semibold">Average Max Scroll</h3>
                 <p className="mt-2 text-3xl font-bold tabular-nums">
                   {formatDepth(metrics.scrollDepth.averageMaxScrollDepth)}
@@ -141,7 +138,7 @@ export default async function DashboardPage() {
                   Deepest scroll milestone averaged across sessions
                 </p>
               </div>
-              <div className="rounded-xl border bg-card p-6 ring-1 ring-foreground/10">
+              <div className="rounded-xl border border-border bg-card p-6 shadow-[0_1px_2px_rgba(23,23,23,0.04)]">
                 <h3 className="text-sm font-semibold">Form Submit Rate</h3>
                 <p className="mt-2 text-3xl font-bold tabular-nums">
                   {formatPercent(metrics.formSubmitRate)}

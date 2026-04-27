@@ -15,10 +15,14 @@ export function TopNav() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-lg font-semibold tracking-tight">
+          <span
+            aria-hidden
+            className="size-2 rounded-full bg-primary shadow-[0_0_0_3px_var(--accent)]"
+          />
+          <span className="text-[15px] font-semibold tracking-tight">
             Liftpilot
           </span>
         </Link>
@@ -31,7 +35,7 @@ export function TopNav() {
               className={cn(
                 "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
                 pathname === item.href
-                  ? "bg-muted text-foreground"
+                  ? "bg-accent text-accent-foreground"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >

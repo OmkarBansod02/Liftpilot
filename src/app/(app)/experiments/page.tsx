@@ -1,7 +1,6 @@
 import { FlaskConical } from "lucide-react";
 import { PageContainer } from "@/components/layout/page-container";
 import { PageHeader } from "@/components/layout/page-header";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -33,9 +32,7 @@ export default async function ExperimentsPage() {
       <PageHeader
         title="Experiments"
         description="Review, approve, and track A/B tests on your landing page."
-      >
-        <Badge variant="secondary">Phase 6</Badge>
-      </PageHeader>
+      />
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
         {runningExperiment ? (

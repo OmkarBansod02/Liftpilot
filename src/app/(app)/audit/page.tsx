@@ -29,7 +29,7 @@ export default function AuditPage() {
             variant="secondary"
             className="h-6 rounded-full border-border bg-card px-2.5 text-[11px] font-medium tracking-wide text-muted-foreground uppercase"
           >
-            Surface A
+            Quick start
           </Badge>
         </PageHeader>
 

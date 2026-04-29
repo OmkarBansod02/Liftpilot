@@ -110,12 +110,6 @@ export default function HomePage() {
           <span className="text-[15px] font-semibold tracking-tight">
             Liftpilot
           </span>
-          <Badge
-            variant="secondary"
-            className="ml-1 h-[18px] px-1.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase"
-          >
-            MVP
-          </Badge>
         </Link>
         <nav className="flex items-center gap-1">
           <Button variant="ghost" size="sm" asChild>
@@ -192,7 +186,7 @@ export default function HomePage() {
               </div>
 
               <p className="mt-4 text-[12.5px] text-muted-foreground/90">
-                No signup · Open MVP demo · ~30s to your first audit
+                No signup · Free to try · ~30s to your first audit
               </p>
             </div>
 
@@ -397,7 +391,7 @@ export default function HomePage() {
                   aria-hidden
                   className="size-1.5 rounded-full bg-success"
                 />
-                MVP demo · v0.1
+                Live demo
               </div>
               <p className="mt-3 text-[13px] text-muted-foreground sm:ml-auto">
                 Built for founders & growth engineers.

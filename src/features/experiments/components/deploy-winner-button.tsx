@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -12,9 +12,9 @@ interface DeployWinnerButtonProps {
 }
 
 function getDeployLabel(winner: ExperimentWinnerRecommendation): string {
-  if (winner === "variant") return "Deploy variant as baseline";
-  if (winner === "control") return "Keep control as baseline";
-  return "Deploy winner";
+  if (winner === "variant") return "Deploy variant";
+  if (winner === "control") return "Keep baseline";
+  return "Awaiting winner";
 }
 
 export function DeployWinnerButton({
@@ -52,24 +52,26 @@ export function DeployWinnerButton({
   }
 
   return (
-    <div className="flex flex-col items-stretch gap-2 sm:items-end">
+    <div className="flex flex-col items-stretch gap-1.5 sm:items-end">
       <Button
         type="button"
         size="sm"
-        className="gap-2"
+        className={
+          canDeploy
+            ? "gap-2 bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500"
+            : "gap-2"
+        }
         disabled={!canDeploy || isDeploying}
         onClick={handleDeploy}
       >
+        {isDeploying && <Loader2 className="size-3.5 animate-spin" />}
         {isDeploying ? "Deploying…" : getDeployLabel(recommendedWinner)}
         {canDeploy && !isDeploying && <ArrowRight className="size-3.5" />}
       </Button>
-      {!canDeploy && (
-        <p className="max-w-xs text-xs text-muted-foreground sm:text-right">
-          Keep the test running to collect more data before picking a winner.
-        </p>
-      )}
       {error && (
-        <p className="text-xs text-destructive sm:text-right">{error}</p>
+        <p className="max-w-xs text-xs text-destructive sm:text-right">
+          {error}
+        </p>
       )}
     </div>
   );

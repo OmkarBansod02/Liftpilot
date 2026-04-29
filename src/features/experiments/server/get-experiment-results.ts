@@ -123,3 +123,26 @@ export async function getRunningExperimentResultsForPage(
 
   return getExperimentResults(row.id);
 }
+
+export async function getLatestExperimentForPage(
+  pageId: string,
+): Promise<ExperimentResultSummary | null> {
+  const running = await getRunningExperimentResultsForPage(pageId);
+  if (running) return running;
+
+  const [completedRow] = await db
+    .select({ id: experiments.id })
+    .from(experiments)
+    .where(
+      and(
+        eq(experiments.pageId, pageId),
+        eq(experiments.status, "completed"),
+      ),
+    )
+    .orderBy(desc(experiments.completedAt), desc(experiments.createdAt))
+    .limit(1);
+
+  if (!completedRow) return null;
+
+  return getExperimentResults(completedRow.id);
+}

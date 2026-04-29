@@ -1,9 +1,8 @@
-import { CheckCircle2 } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, Clock, Minus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -58,7 +57,7 @@ function getWinnerCopy(
 ): WinnerCopy {
   if (winner === "variant") {
     return {
-      label: "Variant",
+      label: "Variant wins",
       caption: isCompleted
         ? "Variant was deployed as the new baseline."
         : "The variant is outperforming the baseline so far.",
@@ -66,14 +65,14 @@ function getWinnerCopy(
   }
   if (winner === "control") {
     return {
-      label: "Control (baseline)",
+      label: "Control holds",
       caption: isCompleted
         ? "Baseline was kept. Variant did not outperform."
         : "The baseline is holding up against the variant so far.",
     };
   }
   return {
-    label: "Inconclusive — needs more data",
+    label: "Too early to call",
     caption: "Keep the test running to collect more sessions on both arms.",
   };
 }
@@ -87,167 +86,160 @@ export function RunningExperimentCard({
   const winnerCopy = getWinnerCopy(winner, isCompleted);
   const controlHighlighted = winner === "control";
   const variantHighlighted = winner === "variant";
+  const hasWinner = winner !== "inconclusive";
+  const liftPositive =
+    experiment.lift.relativeLiftPercent !== null &&
+    experiment.lift.relativeLiftPercent > 0;
 
   return (
     <Card className="lg:col-span-2">
       <CardHeader>
         <div className="flex items-start justify-between gap-4">
-          <div>
-            <CardTitle>
-              {formatTargetArea(experiment.variantTargetArea)} A/B test
+          <div className="space-y-1">
+            <CardTitle className="text-lg">
+              {formatTargetArea(experiment.variantTargetArea)} A/B Test
             </CardTitle>
-            <CardDescription>
-              Comparing the generated variant against the current baseline on
-              the demo page.
-            </CardDescription>
+            <p className="text-sm text-muted-foreground">
+              {experiment.variantHeadline}
+              <span className="mx-1.5 text-border">·</span>
+              CTA: {experiment.variantCtaLabel}
+            </p>
           </div>
           <Badge variant={isCompleted ? "secondary" : "default"}>
             {isCompleted ? "Completed" : "Running"}
           </Badge>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="rounded-xl border bg-muted/30 p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Proposed variant
-          </p>
-          <p className="mt-1 text-sm font-semibold">
-            {experiment.variantHeadline}
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            CTA: {experiment.variantCtaLabel}
-          </p>
-        </div>
 
-        <div className="mt-5 rounded-xl border p-5">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Recommended winner
-          </p>
-          <p className="mt-1 text-2xl font-semibold">{winnerCopy.label}</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {winnerCopy.caption}
-          </p>
+      <CardContent className="space-y-5">
+        {/* ── Result summary ── */}
+        <div
+          className={cn(
+            "rounded-xl border p-5",
+            hasWinner && !isCompleted && "border-emerald-200 bg-emerald-50/50 dark:border-emerald-900/50 dark:bg-emerald-950/20",
+            isCompleted && "border-border bg-muted/30",
+          )}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                {isCompleted ? "Final result" : "Recommended winner"}
+              </p>
+              <p
+                className={cn(
+                  "mt-1.5 text-xl font-semibold",
+                  hasWinner && !isCompleted && "text-emerald-700 dark:text-emerald-400",
+                )}
+              >
+                {winnerCopy.label}
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {winnerCopy.caption}
+              </p>
+            </div>
+            {!isCompleted && hasWinner && (
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/40">
+                <ArrowUpRight className="size-5 text-emerald-600 dark:text-emerald-400" />
+              </div>
+            )}
+            {!isCompleted && !hasWinner && (
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted">
+                <Clock className="size-5 text-muted-foreground" />
+              </div>
+            )}
+          </div>
 
           <div className="mt-4 grid gap-4 border-t pt-4 sm:grid-cols-2">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <p className="text-xs font-medium text-muted-foreground">
                 Relative lift
               </p>
-              <p className="mt-1 text-lg font-semibold tabular-nums">
+              <p
+                className={cn(
+                  "mt-1 text-2xl font-bold tabular-nums",
+                  liftPositive && "text-emerald-600 dark:text-emerald-400",
+                )}
+              >
                 {formatRelativeLift(experiment.lift.relativeLiftPercent)}
-              </p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                Variant vs. control conversion rate
               </p>
             </div>
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <p className="text-xs font-medium text-muted-foreground">
                 Absolute change
               </p>
-              <p className="mt-1 text-lg font-semibold tabular-nums">
+              <p className="mt-1 text-2xl font-bold tabular-nums">
                 {formatSignedPercentagePoints(
                   experiment.lift.absoluteDifference,
                 )}
               </p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                Difference in conversion rate
-              </p>
             </div>
           </div>
 
-          <p className="mt-4 text-xs text-muted-foreground">
-            Based on current traffic. This is a simple comparison, not a
-            statistical significance test.
+          <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground/70">
+            Simple comparison — not a statistical significance test.
           </p>
         </div>
 
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <div
-            className={cn(
-              "rounded-xl border p-4 transition-colors",
-              controlHighlighted &&
-                "border-accent-foreground/30 bg-accent/30 ring-1 ring-accent-foreground/15",
-            )}
-          >
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold">Control</h3>
-              {controlHighlighted ? (
-                <Badge
-                  variant="secondary"
-                  className="bg-accent text-accent-foreground"
-                >
-                  Recommended
-                </Badge>
-              ) : (
-                <Badge variant="outline">Baseline</Badge>
-              )}
-            </div>
-            <p className="mt-4 text-3xl font-bold tabular-nums">
-              {formatPercent(experiment.arms.control.conversionRate)}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {experiment.arms.control.conversions} conversions /{" "}
-              {experiment.arms.control.sessions} sessions
-            </p>
-          </div>
-
-          <div
-            className={cn(
-              "rounded-xl border p-4 transition-colors",
-              variantHighlighted &&
-                "border-accent-foreground/30 bg-accent/30 ring-1 ring-accent-foreground/15",
-            )}
-          >
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold">Variant</h3>
-              {variantHighlighted ? (
-                <Badge
-                  variant="secondary"
-                  className="bg-accent text-accent-foreground"
-                >
-                  Recommended
-                </Badge>
-              ) : (
-                <Badge variant="outline">Challenger</Badge>
-              )}
-            </div>
-            <p className="mt-4 text-3xl font-bold tabular-nums">
-              {formatPercent(experiment.arms.variant.conversionRate)}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {experiment.arms.variant.conversions} conversions /{" "}
-              {experiment.arms.variant.sessions} sessions
-            </p>
-          </div>
+        {/* ── Arm comparison cards ── */}
+        <div className="grid gap-3 sm:grid-cols-2">
+          <ArmCard
+            label="Control"
+            tag="Baseline"
+            conversionRate={experiment.arms.control.conversionRate}
+            conversions={experiment.arms.control.conversions}
+            sessions={experiment.arms.control.sessions}
+            highlighted={controlHighlighted}
+            isWinner={controlHighlighted && (isCompleted || hasWinner)}
+          />
+          <ArmCard
+            label="Variant"
+            tag="Challenger"
+            conversionRate={experiment.arms.variant.conversionRate}
+            conversions={experiment.arms.variant.conversions}
+            sessions={experiment.arms.variant.sessions}
+            highlighted={variantHighlighted}
+            isWinner={variantHighlighted && (isCompleted || hasWinner)}
+          />
         </div>
 
-        <div className="mt-5 grid gap-3 border-t pt-4 text-xs text-muted-foreground sm:grid-cols-3">
-          <p>
-            <span className="font-medium text-foreground">Primary event:</span>{" "}
+        {/* ── Metadata row ── */}
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-muted-foreground">
+          <span>
+            <span className="font-medium text-foreground">Event:</span>{" "}
             {experiment.primaryConversionEvent}
-          </p>
-          <p>
+          </span>
+          <span>
+            <span className="font-medium text-foreground">Split:</span> 50/50
+          </span>
+          <span>
             <span className="font-medium text-foreground">
               {isCompleted ? "Completed:" : "Started:"}
             </span>{" "}
             {formatDate(
               isCompleted ? experiment.completedAt : experiment.startedAt,
             )}
-          </p>
-          <p>
-            <span className="font-medium text-foreground">Split:</span> 50/50
-            traffic
-          </p>
+          </span>
         </div>
 
+        {/* ── Deploy action ── */}
         {showDeployAction && !isCompleted && (
-          <div className="mt-6 rounded-xl border bg-muted/20 p-4">
+          <div
+            className={cn(
+              "rounded-xl border p-4",
+              hasWinner
+                ? "border-emerald-200 bg-emerald-50/40 dark:border-emerald-900/50 dark:bg-emerald-950/15"
+                : "bg-muted/20",
+            )}
+          >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <h3 className="text-sm font-semibold">Ship the winner</h3>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Promote the recommended winner to the new baseline and close
-                  the loop.
+                <h3 className="text-sm font-semibold">
+                  {hasWinner ? "Ready to ship" : "Waiting for a clear winner"}
+                </h3>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {hasWinner
+                    ? "Deploy the recommended winner to close the loop."
+                    : "Collect more traffic before deploying."}
                 </p>
               </div>
               <DeployWinnerButton
@@ -258,12 +250,15 @@ export function RunningExperimentCard({
           </div>
         )}
 
+        {/* ── Completed banner ── */}
         {isCompleted && (
-          <div className="mt-6 flex items-start gap-3 rounded-xl border bg-muted/20 p-4">
-            <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-foreground" />
+          <div className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50/40 p-4 dark:border-emerald-900/50 dark:bg-emerald-950/15">
+            <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
             <div>
-              <p className="text-sm font-semibold">Winner deployed</p>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+                Experiment complete
+              </p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
                 {winner === "variant"
                   ? "The variant is now the baseline for this page."
                   : "The baseline was kept. The variant was not deployed."}
@@ -273,5 +268,64 @@ export function RunningExperimentCard({
         )}
       </CardContent>
     </Card>
+  );
+}
+
+/* ── Arm comparison sub-component ── */
+
+interface ArmCardProps {
+  label: string;
+  tag: string;
+  conversionRate: number;
+  conversions: number;
+  sessions: number;
+  highlighted: boolean;
+  isWinner: boolean;
+}
+
+function ArmCard({
+  label,
+  tag,
+  conversionRate,
+  conversions,
+  sessions,
+  highlighted,
+  isWinner,
+}: ArmCardProps) {
+  return (
+    <div
+      className={cn(
+        "rounded-xl border p-4 transition-colors",
+        highlighted
+          ? "border-emerald-200 bg-emerald-50/40 ring-1 ring-emerald-200/60 dark:border-emerald-900/50 dark:bg-emerald-950/15 dark:ring-emerald-900/30"
+          : "bg-muted/20",
+      )}
+    >
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-semibold">{label}</h3>
+        {isWinner ? (
+          <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400">
+            Winner
+          </Badge>
+        ) : (
+          <Badge variant="outline" className="text-muted-foreground">
+            {tag}
+          </Badge>
+        )}
+      </div>
+      <p
+        className={cn(
+          "mt-3 text-3xl font-bold tabular-nums",
+          highlighted && "text-emerald-700 dark:text-emerald-400",
+        )}
+      >
+        {formatPercent(conversionRate)}
+      </p>
+      <p className="mt-1 text-xs text-muted-foreground">
+        {conversions} conversion{conversions !== 1 ? "s" : ""}
+        <Minus className="mx-1 inline size-2.5 text-border" />
+        {sessions} session{sessions !== 1 ? "s" : ""}
+      </p>
+    </div>
   );
 }

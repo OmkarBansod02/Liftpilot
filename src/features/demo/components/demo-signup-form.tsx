@@ -35,24 +35,24 @@ export function DemoSignupForm({ ctaLabel }: DemoSignupFormProps) {
 
   return (
     <section id="signup" className="border-t bg-muted/40">
-      <div className="mx-auto max-w-md px-6 py-20 text-center">
-        <h2 className="text-2xl font-semibold tracking-tight">
+      <div className="mx-auto max-w-lg px-6 py-24 text-center">
+        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
           {demoContent.formHeadline}
         </h2>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="mt-3 text-base text-muted-foreground">
           {demoContent.formDescription}
         </p>
 
         {submitted ? (
-          <div className="mt-8 flex flex-col items-center gap-2">
-            <CheckCircle2 className="size-8 text-primary" />
-            <p className="text-sm font-medium">You&apos;re on the list!</p>
-            <p className="text-xs text-muted-foreground">
+          <div className="mt-10 flex flex-col items-center gap-3">
+            <CheckCircle2 className="size-10 text-primary" />
+            <p className="text-base font-semibold">You&apos;re on the list!</p>
+            <p className="text-sm text-muted-foreground">
               We&apos;ll be in touch soon.
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="mt-8 flex gap-2">
+          <form onSubmit={handleSubmit} className="mt-10 flex gap-3">
             <Input
               type="email"
               placeholder="you@company.com"
@@ -60,9 +60,11 @@ export function DemoSignupForm({ ctaLabel }: DemoSignupFormProps) {
               onChange={(e) => setEmail(e.target.value)}
               onFocus={handleFocus}
               required
-              className="flex-1"
+              className="h-11 flex-1 px-4 text-base"
             />
-            <Button type="submit">{ctaLabel}</Button>
+            <Button type="submit" className="h-11 px-5 text-base shadow-md">
+              {ctaLabel}
+            </Button>
           </form>
         )}
       </div>

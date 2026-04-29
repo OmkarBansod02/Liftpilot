@@ -27,31 +27,40 @@ export function DemoHero({ content }: DemoHeroProps) {
   }
 
   return (
-    <section className="mx-auto max-w-3xl px-6 pb-20 pt-24 text-center sm:pt-32">
-      <p className="text-sm font-medium tracking-wide text-muted-foreground uppercase">
+    <section className="mx-auto max-w-3xl px-6 pb-24 pt-28 text-center sm:pb-32 sm:pt-40">
+      <p className="text-xs font-semibold tracking-widest text-primary/80 uppercase">
         {content.brand}
       </p>
-      <h1 className="mt-4 text-4xl font-bold tracking-tight whitespace-pre-line sm:text-5xl">
+      <h1 className="mt-5 text-5xl font-extrabold tracking-tight whitespace-pre-line text-balance sm:text-6xl">
         {content.headline}
       </h1>
-      <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">
+      <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
         {content.subheadline}
       </p>
-      <div className="mt-8 flex items-center justify-center gap-3">
-        <Button size="lg" onClick={handleCtaClick}>
+      <div className="mt-10 flex items-center justify-center gap-4">
+        <Button
+          size="lg"
+          className="h-11 px-6 text-base shadow-md"
+          onClick={handleCtaClick}
+        >
           {content.primaryCtaLabel}
           <ArrowRight className="size-4" />
         </Button>
-        <Button variant="outline" size="lg" onClick={handleCtaClick}>
+        <Button
+          variant="outline"
+          size="lg"
+          className="h-11 px-6 text-base"
+          onClick={handleCtaClick}
+        >
           {content.secondaryCtaLabel}
         </Button>
       </div>
       {content.trustProofRow.length > 0 && (
-        <div className="mx-auto mt-8 flex max-w-2xl flex-wrap items-center justify-center gap-2">
+        <div className="mx-auto mt-10 flex max-w-2xl flex-wrap items-center justify-center gap-2.5">
           {content.trustProofRow.map((proof) => (
             <span
               key={proof}
-              className="rounded-full border bg-background px-3 py-1 text-xs font-medium text-muted-foreground"
+              className="rounded-full border border-primary/15 bg-accent/60 px-3.5 py-1 text-xs font-medium text-accent-foreground"
             >
               {proof}
             </span>

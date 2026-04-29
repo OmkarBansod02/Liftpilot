@@ -116,7 +116,7 @@ export function RunningExperimentCard({
         <div
           className={cn(
             "rounded-xl border p-5",
-            hasWinner && !isCompleted && "border-emerald-200 bg-emerald-50/50 dark:border-emerald-900/50 dark:bg-emerald-950/20",
+            hasWinner && !isCompleted && "border-success/20 bg-success/5",
             isCompleted && "border-border bg-muted/30",
           )}
         >
@@ -128,7 +128,7 @@ export function RunningExperimentCard({
               <p
                 className={cn(
                   "mt-1.5 text-xl font-semibold",
-                  hasWinner && !isCompleted && "text-emerald-700 dark:text-emerald-400",
+                  hasWinner && !isCompleted && "text-success",
                 )}
               >
                 {winnerCopy.label}
@@ -138,8 +138,8 @@ export function RunningExperimentCard({
               </p>
             </div>
             {!isCompleted && hasWinner && (
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/40">
-                <ArrowUpRight className="size-5 text-emerald-600 dark:text-emerald-400" />
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-success/10">
+                <ArrowUpRight className="size-5 text-success" />
               </div>
             )}
             {!isCompleted && !hasWinner && (
@@ -157,7 +157,7 @@ export function RunningExperimentCard({
               <p
                 className={cn(
                   "mt-1 text-2xl font-bold tabular-nums",
-                  liftPositive && "text-emerald-600 dark:text-emerald-400",
+                  liftPositive && "text-success",
                 )}
               >
                 {formatRelativeLift(experiment.lift.relativeLiftPercent)}
@@ -227,7 +227,7 @@ export function RunningExperimentCard({
             className={cn(
               "rounded-xl border p-4",
               hasWinner
-                ? "border-emerald-200 bg-emerald-50/40 dark:border-emerald-900/50 dark:bg-emerald-950/15"
+                ? "border-success/20 bg-success/5"
                 : "bg-muted/20",
             )}
           >
@@ -252,10 +252,10 @@ export function RunningExperimentCard({
 
         {/* ── Completed banner ── */}
         {isCompleted && (
-          <div className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50/40 p-4 dark:border-emerald-900/50 dark:bg-emerald-950/15">
-            <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+          <div className="flex items-start gap-3 rounded-xl border border-success/20 bg-success/5 p-4">
+            <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-success" />
             <div>
-              <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+              <p className="text-sm font-semibold text-success">
                 Experiment complete
               </p>
               <p className="mt-0.5 text-xs text-muted-foreground">
@@ -297,14 +297,14 @@ function ArmCard({
       className={cn(
         "rounded-xl border p-4 transition-colors",
         highlighted
-          ? "border-emerald-200 bg-emerald-50/40 ring-1 ring-emerald-200/60 dark:border-emerald-900/50 dark:bg-emerald-950/15 dark:ring-emerald-900/30"
+          ? "border-success/20 bg-success/5 ring-1 ring-success/15"
           : "bg-muted/20",
       )}
     >
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold">{label}</h3>
         {isWinner ? (
-          <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400">
+          <Badge variant="success">
             Winner
           </Badge>
         ) : (
@@ -316,7 +316,7 @@ function ArmCard({
       <p
         className={cn(
           "mt-3 text-3xl font-bold tabular-nums",
-          highlighted && "text-emerald-700 dark:text-emerald-400",
+          highlighted && "text-success",
         )}
       >
         {formatPercent(conversionRate)}

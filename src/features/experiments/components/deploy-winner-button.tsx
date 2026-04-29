@@ -58,7 +58,7 @@ export function DeployWinnerButton({
         size="sm"
         className={
           canDeploy
-            ? "gap-2 bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500"
+            ? "gap-2 bg-success text-success-foreground shadow-sm hover:bg-success/90"
             : "gap-2"
         }
         disabled={!canDeploy || isDeploying}

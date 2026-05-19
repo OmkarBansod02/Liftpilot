@@ -8,18 +8,18 @@ interface DiagnosisEmptyStateProps {
 
 export function DiagnosisEmptyState({ diagnosis }: DiagnosisEmptyStateProps) {
   return (
-    <Card className="items-center gap-0 px-8 py-12 text-center">
-      <div className="flex size-12 items-center justify-center rounded-full bg-accent text-accent-foreground">
+    <Card className="items-center gap-0 border-border/60 bg-gradient-to-b from-accent/20 to-card px-8 py-14 text-center shadow-elevated">
+      <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
         <BarChart3 className="size-6" />
       </div>
-      <h3 className="mt-5 text-base font-semibold">{diagnosis.title}</h3>
-      <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+      <h3 className="mt-6 text-lg font-bold tracking-tight">{diagnosis.title}</h3>
+      <p className="mt-3 max-w-md text-[14px] leading-relaxed text-muted-foreground">
         {diagnosis.summary}
       </p>
       {diagnosis.supportingSignals.length > 0 && (
-        <p className="mt-4 text-xs text-muted-foreground">
+        <p className="mt-5 text-[13px] text-muted-foreground">
           {diagnosis.supportingSignals[0].label}:{" "}
-          <span className="font-medium text-foreground">
+          <span className="font-semibold text-foreground">
             {diagnosis.supportingSignals[0].value}
           </span>
         </p>

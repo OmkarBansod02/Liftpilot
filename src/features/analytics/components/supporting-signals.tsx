@@ -10,19 +10,19 @@ export function SupportingSignals({ signals }: SupportingSignalsProps) {
 
   return (
     <div>
-      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         Supporting signals
       </p>
       <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {signals.map((signal) => (
-          <Card key={signal.label} className="gap-1.5 px-4 py-3.5">
-            <p className="text-xs font-medium text-muted-foreground">
+          <Card key={signal.label} className="gap-2 px-4 py-4">
+            <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
               {signal.label}
             </p>
-            <p className="text-lg font-semibold tabular-nums leading-none">
+            <p className="text-xl font-bold tabular-nums leading-none tracking-tight">
               {signal.value}
             </p>
-            <p className="text-xs leading-5 text-muted-foreground">
+            <p className="text-[11.5px] leading-5 text-muted-foreground">
               {signal.description}
             </p>
           </Card>

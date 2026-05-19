@@ -32,7 +32,8 @@ export function DiagnosisSection({ diagnosis }: DiagnosisSectionProps) {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+    <h2 className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+      <span className="h-4 w-0.5 rounded-full bg-primary/40" />
       {children}
     </h2>
   );

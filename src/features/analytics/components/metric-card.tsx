@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface MetricCardProps {
   title: string;
@@ -19,25 +20,34 @@ export function MetricCard({
   const isPrimary = emphasis === "primary";
 
   return (
-    <Card className="gap-3 px-5 py-4">
+    <Card
+      className={cn(
+        "gap-3 px-5 py-5",
+        isPrimary && "border-primary/15 bg-accent/30",
+      )}
+    >
       <div className="flex items-start justify-between gap-3">
-        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
           {title}
         </p>
         <span
-          className={
+          className={cn(
+            "flex size-8 items-center justify-center rounded-lg",
             isPrimary
-              ? "flex size-7 items-center justify-center rounded-md bg-accent text-accent-foreground"
-              : "flex size-7 items-center justify-center rounded-md bg-muted text-muted-foreground"
-          }
+              ? "bg-primary/10 text-primary"
+              : "bg-muted text-muted-foreground",
+          )}
         >
-          <Icon className="size-3.5" />
+          <Icon className="size-4" />
         </span>
       </div>
-      <p className="text-[26px] font-semibold leading-none tabular-nums tracking-tight">
+      <p className={cn(
+        "text-[28px] font-bold leading-none tabular-nums tracking-tight",
+        isPrimary && "text-primary",
+      )}>
         {value}
       </p>
-      <p className="text-xs leading-relaxed text-muted-foreground">
+      <p className="text-[12px] leading-relaxed text-muted-foreground">
         {description}
       </p>
     </Card>

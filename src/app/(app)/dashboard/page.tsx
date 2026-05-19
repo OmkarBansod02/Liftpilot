@@ -36,7 +36,8 @@ function formatDepth(value: number): string {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+    <h2 className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+      <span className="h-4 w-0.5 rounded-full bg-primary/40" />
       {children}
     </h2>
   );
@@ -50,12 +51,12 @@ interface SecondaryStatCardProps {
 
 function SecondaryStatCard({ title, value, description }: SecondaryStatCardProps) {
   return (
-    <Card className="gap-2 px-5 py-4">
-      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+    <Card className="gap-2.5 px-5 py-5">
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         {title}
       </p>
-      <p className="text-2xl font-semibold tabular-nums leading-none">{value}</p>
-      <p className="text-xs leading-relaxed text-muted-foreground">
+      <p className="text-[26px] font-bold tabular-nums leading-none tracking-tight">{value}</p>
+      <p className="text-[12px] leading-relaxed text-muted-foreground">
         {description}
       </p>
     </Card>

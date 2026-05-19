@@ -60,22 +60,21 @@ export function ConversionFunnel({ metrics }: ConversionFunnelProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {steps.map((step) => {
             const width = Math.max(step.sessionRate * 100, 2);
 
             return (
               <div key={step.label}>
-                <div className="mb-1 flex items-baseline justify-between text-sm">
-                  <span className="font-medium">{step.label}</span>
-                  <span className="text-muted-foreground tabular-nums">
-                    {step.count.toLocaleString()} events -{" "}
-                    {formatPercent(step.sessionRate)} sessions
+                <div className="mb-1.5 flex items-baseline justify-between text-sm">
+                  <span className="font-semibold text-foreground">{step.label}</span>
+                  <span className="text-[12px] text-muted-foreground tabular-nums">
+                    {step.count.toLocaleString()} events · {formatPercent(step.sessionRate)}
                   </span>
                 </div>
-                <div className="h-2 w-full rounded-full bg-muted">
+                <div className="h-2.5 w-full rounded-full bg-muted/80">
                   <div
-                    className="h-2 rounded-full bg-primary transition-all"
+                    className="h-2.5 rounded-full bg-primary/85 transition-all"
                     style={{ width: `${width}%` }}
                   />
                 </div>

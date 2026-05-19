@@ -48,20 +48,26 @@ export function BottleneckCard({ diagnosis }: BottleneckCardProps) {
   const conf = confidenceConfig[diagnosis.confidence];
   const severity = getSeverity(diagnosis.primaryBottleneck);
 
+  const borderAccent: Record<Severity, string> = {
+    issue: "border-l-warning/50",
+    healthy: "border-l-success/50",
+    neutral: "border-l-border",
+  };
+
   return (
-    <Card className="gap-0 p-6">
+    <Card className={`gap-0 border-l-[3px] p-7 shadow-elevated ${borderAccent[severity]}`}>
       <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-4">
           <div
-            className={`mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg ${severityIconStyles[severity]}`}
+            className={`mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-xl ${severityIconStyles[severity]}`}
           >
             <SeverityIcon severity={severity} />
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Primary Bottleneck
             </p>
-            <h2 className="mt-1 text-lg font-semibold leading-snug">
+            <h2 className="mt-1.5 text-lg font-bold leading-snug tracking-tight">
               {diagnosis.title}
             </h2>
           </div>
@@ -70,7 +76,7 @@ export function BottleneckCard({ diagnosis }: BottleneckCardProps) {
           {conf.label}
         </Badge>
       </div>
-      <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+      <p className="mt-5 max-w-3xl text-[14px] leading-relaxed text-muted-foreground">
         {diagnosis.summary}
       </p>
     </Card>

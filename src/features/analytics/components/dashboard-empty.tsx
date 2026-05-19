@@ -5,22 +5,31 @@ import { Card } from "@/components/ui/card";
 
 export function DashboardEmpty() {
   return (
-    <Card className="items-center gap-0 px-8 py-14 text-center">
-      <div className="flex size-12 items-center justify-center rounded-full bg-accent text-accent-foreground">
-        <Activity className="size-6" />
+    <Card className="items-center gap-0 border-border/60 bg-gradient-to-b from-accent/30 to-card px-8 py-16 text-center shadow-elevated">
+      <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+        <Activity className="size-7" />
       </div>
-      <h3 className="mt-5 text-base font-semibold">Waiting for traffic</h3>
-      <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+      <h3 className="mt-6 text-lg font-bold tracking-tight">Waiting for traffic</h3>
+      <p className="mt-3 max-w-md text-[14px] leading-relaxed text-muted-foreground">
         Liftpilot will start surfacing diagnosis, recommendations, and a
         proposed variant as soon as your demo landing page records its first
         sessions.
       </p>
-      <ul className="mt-5 space-y-1.5 text-xs text-muted-foreground">
-        <li>1. Open the demo page and interact with the hero</li>
-        <li>2. Trigger a CTA click or a form start</li>
-        <li>3. Return here — the dashboard updates automatically</li>
-      </ul>
-      <Button size="sm" className="mt-6 gap-2" asChild>
+      <div className="mt-7 space-y-2 text-[13px] text-muted-foreground">
+        <p className="flex items-center justify-center gap-2">
+          <span className="flex size-5 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">1</span>
+          Open the demo page and interact with the hero
+        </p>
+        <p className="flex items-center justify-center gap-2">
+          <span className="flex size-5 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">2</span>
+          Trigger a CTA click or a form start
+        </p>
+        <p className="flex items-center justify-center gap-2">
+          <span className="flex size-5 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">3</span>
+          Return here — the dashboard updates automatically
+        </p>
+      </div>
+      <Button className="mt-8" asChild>
         <Link href="/demo">
           Open demo page
           <ArrowRight className="size-3.5" />

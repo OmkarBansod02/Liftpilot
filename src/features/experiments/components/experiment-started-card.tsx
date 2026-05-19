@@ -23,8 +23,8 @@ export function ExperimentStartedCard({
       <CardHeader>
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3.5">
-            <div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
-              <CheckCircle2 className="size-5 text-primary" />
+            <div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-xl bg-success/10">
+              <CheckCircle2 className="size-5 text-success" />
             </div>
             <div>
               <CardTitle className="text-[16px] font-bold tracking-tight">Experiment started</CardTitle>
@@ -33,7 +33,7 @@ export function ExperimentStartedCard({
               </CardDescription>
             </div>
           </div>
-          <Badge>Running</Badge>
+          <Badge variant="warning">Running</Badge>
         </div>
       </CardHeader>
       <CardContent>

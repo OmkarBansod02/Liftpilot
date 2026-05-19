@@ -65,7 +65,7 @@ export function BottleneckCard({ diagnosis }: BottleneckCardProps) {
           </div>
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Primary Bottleneck
+              Likely bottleneck
             </p>
             <h2 className="mt-1.5 text-lg font-bold leading-snug tracking-tight">
               {diagnosis.title}

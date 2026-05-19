@@ -105,7 +105,7 @@ export function RunningExperimentCard({
               CTA: {experiment.variantCtaLabel}
             </p>
           </div>
-          <Badge variant={isCompleted ? "secondary" : "default"}>
+          <Badge variant={isCompleted ? "secondary" : "warning"}>
             {isCompleted ? "Completed" : "Running"}
           </Badge>
         </div>

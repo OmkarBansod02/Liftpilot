@@ -45,8 +45,8 @@ export function DemoSignupForm({ ctaLabel }: DemoSignupFormProps) {
 
         {submitted ? (
           <div className="mt-12 flex flex-col items-center gap-4">
-            <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10">
-              <CheckCircle2 className="size-7 text-primary" />
+            <div className="flex size-14 items-center justify-center rounded-2xl bg-success/10">
+              <CheckCircle2 className="size-7 text-success" />
             </div>
             <p className="text-lg font-bold">You&apos;re on the list!</p>
             <p className="text-[14px] text-muted-foreground">

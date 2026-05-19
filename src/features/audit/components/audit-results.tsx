@@ -24,8 +24,8 @@ export function AuditResults({ result, onAuditAnother }: AuditResultsProps) {
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div className="space-y-1.5">
             <Badge
-              variant="secondary"
-              className="h-6 gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 text-[11px] font-semibold text-success"
+              variant="success"
+              className="h-6 gap-1.5 rounded-full px-2.5 text-[11px] font-semibold"
             >
               <CheckCircle2 className="size-3" />
               Audit complete

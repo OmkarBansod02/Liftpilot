@@ -54,44 +54,43 @@
 }
 
 :root {
-  /* Liftpilot warm palette */
-  --background: #f8f3ec;
-  --foreground: #171717;
+  --background: #faf7f2;
+  --foreground: #1a1614;
   --card: #ffffff;
-  --card-foreground: #171717;
+  --card-foreground: #1a1614;
   --popover: #ffffff;
-  --popover-foreground: #171717;
-  --primary: #d76a32;
+  --popover-foreground: #1a1614;
+  --primary: #c85a28;
   --primary-foreground: #ffffff;
-  --secondary: #fcf8f3;
-  --secondary-foreground: #171717;
-  --muted: #fcf8f3;
-  --muted-foreground: #6f665f;
-  --accent: #fceadf;
-  --accent-foreground: #bd5622;
+  --secondary: #fdf9f5;
+  --secondary-foreground: #1a1614;
+  --muted: #fdf9f5;
+  --muted-foreground: #7d746b;
+  --accent: #fef0e6;
+  --accent-foreground: #b04d1e;
   --destructive: #b91c1c;
-  --border: #e7ddd2;
-  --input: #e7ddd2;
-  --ring: #d76a32;
-  --surface-muted: #fcf8f3;
-  --success: #1e8e5a;
+  --border: #ebe3d9;
+  --input: #ebe3d9;
+  --ring: #c85a28;
+  --surface-muted: #fdfaf6;
+  --success: #1a7a4e;
   --success-foreground: #ffffff;
-  --warning: #b7791f;
+  --warning: #a66d1a;
   --warning-foreground: #ffffff;
-  --chart-1: #d76a32;
-  --chart-2: #b7791f;
-  --chart-3: #6f665f;
-  --chart-4: #1e8e5a;
-  --chart-5: #171717;
-  --radius: 0.625rem;
+  --chart-1: #c85a28;
+  --chart-2: #a66d1a;
+  --chart-3: #7d746b;
+  --chart-4: #1a7a4e;
+  --chart-5: #1a1614;
+  --radius: 0.75rem;
   --sidebar: #ffffff;
-  --sidebar-foreground: #171717;
-  --sidebar-primary: #d76a32;
+  --sidebar-foreground: #1a1614;
+  --sidebar-primary: #c85a28;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #fceadf;
-  --sidebar-accent-foreground: #bd5622;
-  --sidebar-border: #e7ddd2;
-  --sidebar-ring: #d76a32;
+  --sidebar-accent: #fef0e6;
+  --sidebar-accent-foreground: #b04d1e;
+  --sidebar-border: #ebe3d9;
+  --sidebar-ring: #c85a28;
 }
 
 .dark {
@@ -137,8 +136,33 @@
     font-feature-settings:
       "ss01" on,
       "cv11" on;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer utilities {
+  .shadow-card {
+    box-shadow:
+      0 1px 3px rgba(26, 22, 20, 0.04),
+      0 4px 12px -4px rgba(26, 22, 20, 0.06);
+  }
+  .shadow-card-hover {
+    box-shadow:
+      0 4px 16px -4px rgba(26, 22, 20, 0.10),
+      0 12px 32px -8px rgba(26, 22, 20, 0.08);
+  }
+  .shadow-elevated {
+    box-shadow:
+      0 8px 24px -8px rgba(26, 22, 20, 0.12),
+      0 2px 6px rgba(26, 22, 20, 0.04);
+  }
+  .shadow-primary-glow {
+    box-shadow:
+      0 1px 2px rgba(200, 90, 40, 0.2),
+      0 8px 24px -8px rgba(200, 90, 40, 0.35);
   }
 }

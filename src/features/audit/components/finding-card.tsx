@@ -48,13 +48,13 @@ export function FindingCard({ finding }: FindingCardProps) {
   return (
     <Card
       size="sm"
-      className="transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_8px_24px_-16px_rgba(23,23,23,0.16)]"
+      className="transition-all hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-card-hover"
     >
       <CardContent>
         <div className="flex items-center justify-between gap-2">
           <Badge
             variant="outline"
-            className="h-5 gap-1 rounded-md border-border bg-surface-muted px-1.5 text-[11px] font-medium text-muted-foreground"
+            className="h-[22px] gap-1.5 rounded-md border-border/80 bg-surface-muted px-2 text-[11px] font-medium text-muted-foreground"
           >
             <Icon className="size-3" />
             {categoryLabels[finding.category]}
@@ -62,17 +62,17 @@ export function FindingCard({ finding }: FindingCardProps) {
           <Badge
             variant="secondary"
             className={cn(
-              "h-5 rounded-full border px-2 text-[10px] font-medium tracking-wide uppercase",
+              "h-[22px] rounded-full border px-2 text-[10px] font-semibold tracking-wide uppercase",
               severityStyles[finding.severity],
             )}
           >
             {finding.severity}
           </Badge>
         </div>
-        <h4 className="mt-3 text-[14px] font-semibold leading-snug tracking-tight">
+        <h4 className="mt-3.5 text-[14px] font-semibold leading-snug tracking-tight">
           {finding.title}
         </h4>
-        <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">
+        <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted-foreground">
           {finding.description}
         </p>
       </CardContent>

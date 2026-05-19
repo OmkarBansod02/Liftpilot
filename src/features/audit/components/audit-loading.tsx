@@ -30,50 +30,50 @@ export function AuditLoading({ url }: AuditLoadingProps) {
   const progressPercent = ((currentStep + 1) / totalSteps) * 100;
 
   return (
-    <Card>
-      <CardContent className="py-8 sm:py-10">
-        <div className="mx-auto max-w-md space-y-6">
+    <Card className="shadow-elevated">
+      <CardContent className="py-10 sm:py-12">
+        <div className="mx-auto max-w-md space-y-7">
           {url && (
-            <div className="flex items-center gap-2 rounded-lg border border-border bg-surface-muted px-3 py-2 text-[12.5px] text-muted-foreground">
-              <Globe className="size-3.5 shrink-0" />
+            <div className="flex items-center gap-2.5 rounded-xl border border-border/70 bg-surface-muted px-4 py-2.5 text-[13px] text-muted-foreground">
+              <Globe className="size-4 shrink-0" />
               <span className="truncate">{url}</span>
             </div>
           )}
 
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             <div className="flex items-center justify-between text-sm">
-              <span className="font-medium tracking-tight">
+              <span className="font-semibold tracking-tight">
                 Analyzing page…
               </span>
               <span className="font-mono text-[12px] text-muted-foreground">
                 {Math.round(progressPercent)}%
               </span>
             </div>
-            <Progress value={progressPercent} className="h-1.5" />
+            <Progress value={progressPercent} className="h-2" />
           </div>
 
-          <ol className="space-y-2.5">
+          <ol className="space-y-3">
             {AUDIT_LOADING_STEPS.map((step, index) => {
               const isDone = index < currentStep;
               const isActive = index === currentStep;
               return (
                 <li key={step.label} className="flex items-center gap-3">
-                  <span className="flex size-5 shrink-0 items-center justify-center">
+                  <span className="flex size-6 shrink-0 items-center justify-center">
                     {isDone ? (
-                      <span className="flex size-5 items-center justify-center rounded-full bg-primary/10 text-primary">
-                        <Check className="size-3" />
+                      <span className="flex size-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <Check className="size-3.5" />
                       </span>
                     ) : isActive ? (
-                      <Loader2 className="size-4 animate-spin text-primary" />
+                      <Loader2 className="size-4.5 animate-spin text-primary" />
                     ) : (
-                      <span className="size-1.5 rounded-full bg-muted-foreground/30" />
+                      <span className="size-1.5 rounded-full bg-muted-foreground/25" />
                     )}
                   </span>
                   <span
                     className={
                       isDone || isActive
-                        ? "text-sm text-foreground"
-                        : "text-sm text-muted-foreground"
+                        ? "text-[14px] font-medium text-foreground"
+                        : "text-[14px] text-muted-foreground"
                     }
                   >
                     {step.label}

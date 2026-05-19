@@ -18,22 +18,22 @@ interface AuditResultsProps {
 
 export function AuditResults({ result, onAuditAnother }: AuditResultsProps) {
   return (
-    <div className="space-y-10">
+    <div className="space-y-12">
       {/* Verdict — top hero row */}
-      <section className="space-y-4">
+      <section className="space-y-5">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <Badge
               variant="secondary"
-              className="h-6 gap-1 rounded-full border border-success/20 bg-success/10 px-2.5 text-[11px] font-medium text-success"
+              className="h-6 gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 text-[11px] font-semibold text-success"
             >
               <CheckCircle2 className="size-3" />
               Audit complete
             </Badge>
-            <h2 className="font-heading text-xl font-semibold tracking-tight">
+            <h2 className="font-heading text-[22px] font-bold tracking-tight">
               Verdict
             </h2>
-            <p className="text-[13px] text-muted-foreground">
+            <p className="text-[13.5px] text-muted-foreground">
               {result.findings.length}{" "}
               {result.findings.length === 1 ? "finding" : "findings"} ·{" "}
               {result.issues.length}{" "}
@@ -49,7 +49,7 @@ export function AuditResults({ result, onAuditAnother }: AuditResultsProps) {
           )}
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-5">
+        <div className="grid gap-5 lg:grid-cols-5">
           <div className="lg:col-span-3">
             <AuditScreenshot
               screenshotUrl={result.screenshotUrl}

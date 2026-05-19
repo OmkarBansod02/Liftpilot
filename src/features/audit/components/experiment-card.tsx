@@ -33,20 +33,20 @@ export function ExperimentCard({ experiment }: ExperimentCardProps) {
         </Badge>
       </div>
 
-      <Card className="border-primary/30 shadow-[0_1px_2px_rgba(189,86,34,0.08),0_24px_48px_-32px_rgba(189,86,34,0.18)]">
-        <CardHeader className="border-b">
-          <div className="flex items-center gap-3">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-[0_1px_2px_rgba(189,86,34,0.25)]">
-              <FlaskConical className="size-4" />
+      <Card className="border-primary/25 shadow-[0_2px_4px_rgba(200,90,40,0.06),0_16px_40px_-20px_rgba(200,90,40,0.18)]">
+        <CardHeader className="border-b border-border/60">
+          <div className="flex items-center gap-3.5">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-[0_2px_8px_rgba(200,90,40,0.3)]">
+              <FlaskConical className="size-4.5" />
             </div>
             <div className="min-w-0 flex-1">
-              <CardTitle className="text-[15px] font-semibold tracking-tight">
+              <CardTitle className="text-[16px] font-bold tracking-tight">
                 {experiment.title}
               </CardTitle>
             </div>
             <Badge
               variant="secondary"
-              className="h-6 gap-1 rounded-full border border-success/20 bg-success/10 px-2.5 text-[11px] font-medium text-success"
+              className="h-6 gap-1 rounded-full border border-success/20 bg-success/10 px-2.5 text-[11px] font-semibold text-success"
             >
               <TrendingUp className="size-3" />
               {experiment.expectedImpact}
@@ -54,8 +54,8 @@ export function ExperimentCard({ experiment }: ExperimentCardProps) {
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-5">
-          <div className="space-y-1.5">
+        <CardContent className="space-y-6">
+          <div className="space-y-2">
             <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
               Hypothesis
             </p>
@@ -64,7 +64,7 @@ export function ExperimentCard({ experiment }: ExperimentCardProps) {
             </p>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
               Proposed changes
             </p>
@@ -72,7 +72,7 @@ export function ExperimentCard({ experiment }: ExperimentCardProps) {
               {experiment.changes.map((change) => (
                 <li
                   key={change}
-                  className="flex items-start gap-2.5 rounded-md border border-border bg-surface-muted/60 px-3 py-2"
+                  className="flex items-start gap-2.5 rounded-lg border border-border/70 bg-surface-muted/60 px-3.5 py-2.5"
                 >
                   <span
                     aria-hidden
@@ -88,13 +88,13 @@ export function ExperimentCard({ experiment }: ExperimentCardProps) {
         </CardContent>
 
         <CardFooter>
-          <div className="flex items-start gap-2">
-            <Lightbulb className="mt-0.5 size-3.5 shrink-0 text-primary" />
+          <div className="flex items-start gap-2.5">
+            <Lightbulb className="mt-0.5 size-4 shrink-0 text-primary" />
             <div className="min-w-0">
               <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
                 Rationale
               </p>
-              <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
+              <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">
                 {experiment.rationale}
               </p>
             </div>

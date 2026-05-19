@@ -17,7 +17,7 @@ export default function AuditPage() {
     <div className="relative">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[280px] bg-[radial-gradient(60%_60%_at_50%_0%,var(--accent)_0%,transparent_70%)] opacity-70"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[340px] bg-[radial-gradient(65%_55%_at_50%_0%,var(--accent)_0%,transparent_75%)] opacity-80"
       />
 
       <PageContainer>
@@ -27,22 +27,24 @@ export default function AuditPage() {
         >
           <Badge
             variant="secondary"
-            className="h-6 rounded-full border-border bg-card px-2.5 text-[11px] font-medium tracking-wide text-muted-foreground uppercase"
+            className="h-6 rounded-full border-border/80 bg-card px-2.5 text-[11px] font-medium tracking-wide text-muted-foreground shadow-card uppercase"
           >
             Quick start
           </Badge>
         </PageHeader>
 
-        <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[12.5px] text-muted-foreground">
+        <div className="mt-7 flex flex-wrap items-center gap-x-7 gap-y-2.5 text-[13px] text-muted-foreground">
           {trustItems.map((item) => (
-            <div key={item.label} className="flex items-center gap-1.5">
-              <item.icon className="size-3.5 text-primary/80" />
+            <div key={item.label} className="flex items-center gap-2">
+              <span className="flex size-5 items-center justify-center rounded-full bg-accent">
+                <item.icon className="size-3 text-primary" />
+              </span>
               <span>{item.label}</span>
             </div>
           ))}
         </div>
 
-        <div className="mt-8">
+        <div className="mt-10">
           <AuditPageClient />
         </div>
       </PageContainer>

@@ -33,11 +33,11 @@ export function AuditForm({ onSubmit, isLoading, defaultUrl }: AuditFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-2">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <div
-        className="flex items-center gap-2 rounded-2xl border border-border bg-card p-1.5 pl-3 shadow-[0_1px_2px_rgba(23,23,23,0.04),0_8px_24px_-16px_rgba(23,23,23,0.12)] focus-within:border-primary/40 focus-within:ring-3 focus-within:ring-ring/20 has-aria-invalid:border-destructive/40 has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20"
+        className="flex items-center gap-3 rounded-2xl border border-border/80 bg-card p-2 pl-4 shadow-elevated transition-shadow focus-within:border-primary/40 focus-within:ring-3 focus-within:ring-ring/20 has-aria-invalid:border-destructive/40 has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20"
       >
-        <Globe className="size-4 shrink-0 text-muted-foreground" />
+        <Globe className="size-5 shrink-0 text-muted-foreground/70" />
         <Input
           type="text"
           placeholder="https://yourlanding.com"
@@ -48,13 +48,13 @@ export function AuditForm({ onSubmit, isLoading, defaultUrl }: AuditFormProps) {
           }}
           disabled={isLoading}
           aria-invalid={!!error}
-          className="h-10 flex-1 border-0 bg-transparent px-1 text-[15px] shadow-none focus-visible:ring-0 focus-visible:border-transparent disabled:bg-transparent"
+          className="h-11 flex-1 border-0 bg-transparent px-1 text-base shadow-none focus-visible:ring-0 focus-visible:border-transparent disabled:bg-transparent"
         />
         <Button
           type="submit"
           size="lg"
           disabled={isLoading || !url.trim()}
-          className="h-10 px-4 text-[14px]"
+          className="h-11 px-5 text-[14px] shadow-primary-glow"
         >
           {isLoading ? (
             <>
@@ -71,7 +71,7 @@ export function AuditForm({ onSubmit, isLoading, defaultUrl }: AuditFormProps) {
         </Button>
       </div>
 
-      <div className="flex min-h-[18px] items-center justify-between text-[12px]">
+      <div className="flex min-h-[20px] items-center justify-between px-1 text-[12.5px]">
         {error ? (
           <p className="text-destructive">{error}</p>
         ) : (

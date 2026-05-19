@@ -10,6 +10,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { PageContainer } from "@/components/layout/page-container";
 import { PageHeader } from "@/components/layout/page-header";
+import { SectionLabel } from "@/components/layout/section-label";
 import { MetricCard } from "@/features/analytics/components/metric-card";
 import { ConversionFunnel } from "@/features/analytics/components/conversion-funnel";
 import { DashboardEmpty } from "@/features/analytics/components/dashboard-empty";
@@ -34,14 +35,6 @@ function formatDepth(value: number): string {
   return `${Math.round(value)}%`;
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <h2 className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-      <span className="h-4 w-0.5 rounded-full bg-primary/40" />
-      {children}
-    </h2>
-  );
-}
 
 interface SecondaryStatCardProps {
   title: string;
@@ -101,7 +94,6 @@ export default async function DashboardPage() {
                 value={metrics.totalSessions.toLocaleString()}
                 description="Total tracked sessions"
                 icon={Activity}
-                emphasis="primary"
               />
               <MetricCard
                 title="Page Views"

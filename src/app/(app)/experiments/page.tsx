@@ -52,11 +52,11 @@ export default async function ExperimentsPage() {
           <CardContent>
             <ol className="space-y-4 text-[13.5px] text-muted-foreground">
               {FLOW_STEPS.map((step, index) => (
-                <li key={index} className="flex gap-3 leading-relaxed">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
+                <li key={index} className="flex items-start gap-3 leading-relaxed">
+                  <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
                     {index + 1}
                   </span>
-                  {step}
+                  <span>{step}</span>
                 </li>
               ))}
             </ol>

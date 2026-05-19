@@ -38,13 +38,13 @@ export default async function DemoPage({ searchParams }: DemoPageProps) {
 
   return (
     <div className="flex min-h-full flex-col">
-      <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
-        <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-6">
-          <span className="text-[15px] font-semibold tracking-tight">
+      <header className="sticky top-0 z-50 border-b border-border/70 bg-background/90 shadow-[0_1px_3px_rgba(26,22,20,0.03)] backdrop-blur-md supports-[backdrop-filter]:bg-background/80">
+        <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-6">
+          <span className="text-base font-semibold tracking-tight">
             {baseline.brand}
           </span>
           <nav className="flex items-center gap-4">
-            <Button size="sm" asChild>
+            <Button asChild>
               <a href="#signup">Get started</a>
             </Button>
           </nav>
@@ -60,12 +60,12 @@ export default async function DemoPage({ searchParams }: DemoPageProps) {
         />
       </main>
 
-      <footer className="border-t border-border">
-        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6 text-xs text-muted-foreground">
+      <footer className="border-t border-border/60 bg-surface-muted/50">
+        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6 text-[13px] text-muted-foreground">
           <span>&copy; {baseline.brand}</span>
           <Link
             href="/dashboard"
-            className="font-medium underline underline-offset-2 hover:text-foreground transition-colors"
+            className="font-medium text-primary hover:underline underline-offset-2 transition-colors"
           >
             View Liftpilot Dashboard &rarr;
           </Link>

@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { ensureDemoPage } from "@/features/demo/server/ensure-demo-page";
 import { RunningExperimentCard } from "@/features/experiments/components/running-experiment-card";
 import { getLatestPageExperiment } from "@/features/experiments/server/get-running-experiment-summary";
@@ -34,7 +35,7 @@ export default async function ExperimentsPage() {
         description="Review, approve, and track A/B tests on your landing page."
       />
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-3">
+      <div className="mt-10 grid gap-6 lg:grid-cols-3">
         {experiment ? (
           <RunningExperimentCard
             experiment={experiment}
@@ -44,15 +45,15 @@ export default async function ExperimentsPage() {
           <EmptyExperimentState />
         )}
 
-        <Card>
+        <Card className="self-start">
           <CardHeader>
-            <CardTitle>How it works</CardTitle>
+            <CardTitle className="text-[15px] font-bold tracking-tight">How it works</CardTitle>
           </CardHeader>
           <CardContent>
-            <ol className="space-y-3 text-sm text-muted-foreground">
+            <ol className="space-y-4 text-[13.5px] text-muted-foreground">
               {FLOW_STEPS.map((step, index) => (
                 <li key={index} className="flex gap-3 leading-relaxed">
-                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
+                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
                     {index + 1}
                   </span>
                   {step}
@@ -68,27 +69,26 @@ export default async function ExperimentsPage() {
 
 function EmptyExperimentState() {
   return (
-    <Card className="lg:col-span-2">
+    <Card className="lg:col-span-2 border-border/60 bg-gradient-to-b from-accent/20 to-card shadow-elevated">
       <CardContent className="py-6">
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="flex size-14 items-center justify-center rounded-2xl bg-muted">
-            <FlaskConical className="size-6 text-muted-foreground" />
+          <div className="flex size-16 items-center justify-center rounded-2xl bg-primary/10">
+            <FlaskConical className="size-7 text-primary" />
           </div>
-          <h3 className="mt-5 text-base font-semibold">
+          <h3 className="mt-6 text-lg font-bold tracking-tight">
             No experiment yet
           </h3>
-          <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 max-w-sm text-[14px] leading-relaxed text-muted-foreground">
             Experiments appear here once a variant is approved from the
             dashboard. The system will split traffic, track conversions, and
             recommend a winner.
           </p>
-          <Link
-            href="/dashboard"
-            className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-          >
-            Go to dashboard
-            <ArrowRight className="size-3.5" />
-          </Link>
+          <Button variant="outline" className="mt-7" asChild>
+            <Link href="/dashboard">
+              Go to dashboard
+              <ArrowRight className="size-3.5" />
+            </Link>
+          </Button>
         </div>
       </CardContent>
     </Card>

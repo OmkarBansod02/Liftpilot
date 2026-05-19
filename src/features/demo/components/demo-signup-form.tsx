@@ -34,25 +34,27 @@ export function DemoSignupForm({ ctaLabel }: DemoSignupFormProps) {
   );
 
   return (
-    <section id="signup" className="border-t bg-muted/40">
-      <div className="mx-auto max-w-lg px-6 py-24 text-center">
-        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+    <section id="signup" className="border-t border-border/60 bg-surface-muted">
+      <div className="mx-auto max-w-lg px-6 py-28 text-center">
+        <h2 className="text-[28px] font-bold tracking-tight sm:text-[36px]">
           {demoContent.formHeadline}
         </h2>
-        <p className="mt-3 text-base text-muted-foreground">
+        <p className="mt-4 text-[16px] leading-relaxed text-muted-foreground">
           {demoContent.formDescription}
         </p>
 
         {submitted ? (
-          <div className="mt-10 flex flex-col items-center gap-3">
-            <CheckCircle2 className="size-10 text-primary" />
-            <p className="text-base font-semibold">You&apos;re on the list!</p>
-            <p className="text-sm text-muted-foreground">
+          <div className="mt-12 flex flex-col items-center gap-4">
+            <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10">
+              <CheckCircle2 className="size-7 text-primary" />
+            </div>
+            <p className="text-lg font-bold">You&apos;re on the list!</p>
+            <p className="text-[14px] text-muted-foreground">
               We&apos;ll be in touch soon.
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="mt-10 flex gap-3">
+          <form onSubmit={handleSubmit} className="mt-12 flex gap-3">
             <Input
               type="email"
               placeholder="you@company.com"
@@ -60,9 +62,9 @@ export function DemoSignupForm({ ctaLabel }: DemoSignupFormProps) {
               onChange={(e) => setEmail(e.target.value)}
               onFocus={handleFocus}
               required
-              className="h-11 flex-1 px-4 text-base"
+              className="h-12 flex-1 rounded-xl border-border/80 px-4 text-base shadow-card"
             />
-            <Button type="submit" className="h-11 px-5 text-base shadow-md">
+            <Button type="submit" className="h-12 px-6 text-base shadow-primary-glow">
               {ctaLabel}
             </Button>
           </form>

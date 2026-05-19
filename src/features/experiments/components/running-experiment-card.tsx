@@ -92,16 +92,16 @@ export function RunningExperimentCard({
     experiment.lift.relativeLiftPercent > 0;
 
   return (
-    <Card className="lg:col-span-2">
+    <Card className="lg:col-span-2 shadow-elevated">
       <CardHeader>
         <div className="flex items-start justify-between gap-4">
-          <div className="space-y-1">
-            <CardTitle className="text-lg">
+          <div className="space-y-1.5">
+            <CardTitle className="text-[18px] font-bold tracking-tight">
               {formatTargetArea(experiment.variantTargetArea)} A/B Test
             </CardTitle>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-[13.5px] text-muted-foreground">
               {experiment.variantHeadline}
-              <span className="mx-1.5 text-border">·</span>
+              <span className="mx-2 text-border">·</span>
               CTA: {experiment.variantCtaLabel}
             </p>
           </div>
@@ -295,14 +295,14 @@ function ArmCard({
   return (
     <div
       className={cn(
-        "rounded-xl border p-4 transition-colors",
+        "rounded-xl border p-5 transition-all",
         highlighted
-          ? "border-success/20 bg-success/5 ring-1 ring-success/15"
-          : "bg-muted/20",
+          ? "border-success/25 bg-success/5 shadow-[0_0_0_1px_rgba(26,122,78,0.08)]"
+          : "border-border/70 bg-muted/20",
       )}
     >
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold">{label}</h3>
+        <h3 className="text-[14px] font-semibold">{label}</h3>
         {isWinner ? (
           <Badge variant="success">
             Winner
@@ -315,15 +315,15 @@ function ArmCard({
       </div>
       <p
         className={cn(
-          "mt-3 text-3xl font-bold tabular-nums",
+          "mt-4 text-[32px] font-bold tabular-nums tracking-tight",
           highlighted && "text-success",
         )}
       >
         {formatPercent(conversionRate)}
       </p>
-      <p className="mt-1 text-xs text-muted-foreground">
+      <p className="mt-2 text-[12px] text-muted-foreground">
         {conversions} conversion{conversions !== 1 ? "s" : ""}
-        <Minus className="mx-1 inline size-2.5 text-border" />
+        <Minus className="mx-1.5 inline size-2.5 text-border" />
         {sessions} session{sessions !== 1 ? "s" : ""}
       </p>
     </div>

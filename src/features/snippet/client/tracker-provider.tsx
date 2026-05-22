@@ -43,12 +43,14 @@ const TrackerContext = createContext<TrackerContextValue | null>(null);
 interface TrackerProviderProps {
   pageId: string;
   experimentContext?: ExperimentAssignment | null;
+  anonymousId?: string;
   children: ReactNode;
 }
 
 export function TrackerProvider({
   pageId,
   experimentContext,
+  anonymousId,
   children,
 }: TrackerProviderProps) {
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -57,17 +59,23 @@ export function TrackerProvider({
   const variantArm = experimentContext?.variantArm ?? null;
 
   useEffect(() => {
-    const anonId = getOrCreateAnonymousId();
+    const anonId = anonymousId ?? getOrCreateAnonymousId();
     if (!anonId) return;
+
+    let active = true;
 
     initSession({
       pageId,
       anonymousId: anonId,
       experimentContext: experimentContext ?? null,
     }).then((id) => {
-      if (id) setSessionId(id);
+      if (active && id) setSessionId(id);
     });
-  }, [experimentContext, pageId]);
+
+    return () => {
+      active = false;
+    };
+  }, [anonymousId, experimentContext, pageId]);
 
   const track = useCallback<TrackSnippetEvent>(
     (eventType, ...args) => {

@@ -11,6 +11,7 @@ import type { ExperimentArm } from "@/features/experiments/types";
 interface DemoPageProps {
   searchParams?: Promise<{
     arm?: string | string[] | undefined;
+    freshSession?: string | string[] | undefined;
   }>;
 }
 
@@ -24,12 +25,22 @@ function parseForcedArm(
   return rawArm;
 }
 
+function parseFreshSession(value: string | string[] | undefined): boolean {
+  const rawValue = Array.isArray(value) ? value[0] : value;
+
+  return rawValue === "1";
+}
+
 export default async function DemoPage({ searchParams }: DemoPageProps) {
   const params = searchParams ? await searchParams : undefined;
   const forcedArm =
     process.env.NODE_ENV === "development"
       ? parseForcedArm(params?.arm)
       : null;
+  const freshSession =
+    process.env.NODE_ENV === "development"
+      ? parseFreshSession(params?.freshSession)
+      : false;
   const { pageId } = await ensureDemoPage();
   const [baseline, experimentRuntime] = await Promise.all([
     getDemoPageBaseline(pageId),
@@ -57,6 +68,7 @@ export default async function DemoPage({ searchParams }: DemoPageProps) {
           baseline={baseline}
           experimentRuntime={experimentRuntime}
           forcedArm={forcedArm}
+          freshSession={freshSession}
         />
       </main>
 

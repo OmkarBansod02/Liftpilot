@@ -10,7 +10,10 @@ import type {
   ExperimentArm,
   ExperimentAssignment,
 } from "@/features/experiments/types";
-import { getOrCreateAnonymousId } from "@/features/snippet/client/anonymous-id";
+import {
+  getOrCreateAnonymousId,
+  replaceAnonymousId,
+} from "@/features/snippet/client/anonymous-id";
 import { TrackerProvider } from "@/features/snippet/client/tracker-provider";
 import { usePageView } from "@/features/snippet/client/use-page-view";
 import { useScrollDepth } from "@/features/snippet/client/use-scroll-depth";
@@ -55,11 +58,14 @@ function getForcedAssignment(
 
 function resolveAssignment(
   experimentRuntime: DemoExperimentRuntime,
+  anonymousIdOverride?: string,
 ): ExperimentAssignment {
-  const cookieAssignment = readAssignmentCookie(experimentRuntime.experimentId);
-  if (cookieAssignment) return cookieAssignment;
+  if (!anonymousIdOverride) {
+    const cookieAssignment = readAssignmentCookie(experimentRuntime.experimentId);
+    if (cookieAssignment) return cookieAssignment;
+  }
 
-  const anonymousId = getOrCreateAnonymousId();
+  const anonymousId = anonymousIdOverride ?? getOrCreateAnonymousId();
   const assignment = {
     experimentId: experimentRuntime.experimentId,
     variantArm: assignExperimentArm({
@@ -122,6 +128,7 @@ interface DemoPageClientProps {
   baseline: DemoPageBaseline;
   experimentRuntime: DemoExperimentRuntime | null;
   forcedArm: ExperimentArm | null;
+  freshSession: boolean;
 }
 
 export function DemoPageClient({
@@ -129,20 +136,34 @@ export function DemoPageClient({
   baseline,
   experimentRuntime,
   forcedArm,
+  freshSession,
 }: DemoPageClientProps) {
   const forcedAssignment = getForcedAssignment(experimentRuntime, forcedArm);
+  const [freshAnonymousId, setFreshAnonymousId] = useState<string | null>(null);
   const [resolvedAssignment, setResolvedAssignment] =
     useState<ExperimentAssignment | null>(null);
 
   useEffect(() => {
-    if (!experimentRuntime || forcedAssignment) return;
-
     const timerId = window.setTimeout(() => {
-      setResolvedAssignment(resolveAssignment(experimentRuntime));
+      setResolvedAssignment(null);
+      setFreshAnonymousId(freshSession ? replaceAnonymousId() : null);
     }, 0);
 
     return () => window.clearTimeout(timerId);
-  }, [experimentRuntime, forcedAssignment]);
+  }, [freshSession]);
+
+  useEffect(() => {
+    if (!experimentRuntime || forcedAssignment) return;
+    if (freshSession && !freshAnonymousId) return;
+
+    const timerId = window.setTimeout(() => {
+      setResolvedAssignment(
+        resolveAssignment(experimentRuntime, freshAnonymousId ?? undefined),
+      );
+    }, 0);
+
+    return () => window.clearTimeout(timerId);
+  }, [experimentRuntime, forcedAssignment, freshAnonymousId, freshSession]);
 
   const assignment =
     forcedAssignment ??
@@ -171,10 +192,22 @@ export function DemoPageClient({
     );
   }
 
+  const trackingAnonymousId = freshSession ? freshAnonymousId : null;
+
+  if (freshSession && !trackingAnonymousId) {
+    return (
+      <div className="mx-auto max-w-3xl px-6 py-24 text-center text-sm text-muted-foreground">
+        Preparing test session...
+      </div>
+    );
+  }
+
   return (
     <TrackerProvider
+      key={trackingAnonymousId ?? "stored-anonymous-id"}
       pageId={pageId}
       experimentContext={experimentContext}
+      anonymousId={trackingAnonymousId ?? undefined}
     >
       <TrackedContent heroContent={heroContent} />
       {experimentRuntime && assignment && (

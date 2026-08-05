@@ -301,5 +301,5 @@ In order of likely value:
 ## Status
 
 Liftpilot is a focused exploration, not a production-ready product. The loop
-is end-to-end, the code is meant to be readable, and the simplifications are
-intentional and documented.
+is end-to-end and demoable locally, the code is meant to be readable, and the
+simplifications are intentional and documented.

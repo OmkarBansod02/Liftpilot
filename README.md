@@ -2,7 +2,7 @@
 
 A focused exploration of self-improving landing pages.
 
-Liftpilot is a Next.js app that walks a single landing page through one
+Liftpilot is a Next.js project that walks a single landing page through one
 complete optimization loop:
 
 **audit → observe → diagnose → generate → approve → test → deploy**
